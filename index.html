@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portafolio - Programador Cool</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#home">Inicio</a></li>
+                <li><a href="#about">Sobre mí</a></li>
+                <li><a href="#projects">Proyectos</a></li>
+                <li><a href="#contact">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="home" class="section">
+        <div class="home-content">
+            <h1>Hola, soy <span class="highlight">Angel Sami</span></h1>
+            <p>Especializado en crear experiencias web increíbles.</p>
+            <a href="#projects" class="btn">Ver Proyectos</a>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <h2>Sobre Mí</h2>
+        <div class="about-content">
+            <img src="perfil ft.JPG" alt="Angel Sami" class="profile-img">
+            <p>¡Hola! Soy un programador apasionado por la tecnología. Me encanta aprender nuevas tecnologías y crear proyectos que puedan marcar la diferencia. Desde que comencé, he trabajado con lenguajes como JavaScript, Python, y frameworks como React y Django.</p>
+            <p>Siempre estoy buscando nuevos desafíos que me permitan expandir mis conocimientos. Si tienes un proyecto emocionante, ¡hablemos!</p>
+        </div>
+    </section>
+
+    <section id="projects" class="section">
+        <h2>Mis Proyectos</h2>
+        <div class="projects-grid">
+            <div class="project">
+                <img src="verde proy.png" alt="Proyecto 1">
+                <h3>Ballet Studio Doris Infante.</h3>
+                <p>El proyecto consistió en la creación de un sitio web promocional para "Ballet Studio Doris Infante," enfocado en permitir inscripciones digitales de manera eficiente. El diseño del sitio es elegante y minimalista, combinando imágenes en blanco y negro con un toque de color verde que resalta el logotipo y los elementos interactivos, como botones de registro.</p>
+            </div>
+            <div class="project">
+                <img src="rojo proyec.png" alt="Proyecto 2">
+                <h3>ACE Handyman Services</h3>
+                <p> Este sitio web fue desarrollado para "ACE Handyman Services," una empresa que ofrece servicios de mantenimiento y reparación para el hogar. El diseño del sitio está enfocado en la facilidad de uso, destacando la simplicidad de encontrar un especialista en reparaciones en el área del cliente mediante la introducción de su código postal. Además, el sitio enfatiza los valores de confianza y profesionalismo que ACE Handyman ofrece.</p>
+            </div>
+            <div class="project">
+                <img src="mujer proyec.png" alt="Proyecto 3">
+                <h3>Somos Moda</h3>
+                <p>Este sitio web de comercio electrónico fue desarrollado para "Somos Moda," una tienda en línea especializada en ropa y accesorios para mujeres, hombres, y niños, así como cosméticos y productos de cuidado personal. El sitio ofrece una experiencia de usuario fluida, destacando productos de moda y promociones atractivas. Se incluyó un sistema de pago en línea, opciones de envío a nivel nacional y seguimiento de pedidos para mejorar la experiencia de compra.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section">
+        <h2>Contacto</h2>
+        <form id="contact-form">
+            <input type="text" id="name" placeholder="Tu nombre" required>
+            <input type="email" id="email" placeholder="Tu correo electrónico" required>
+            <textarea id="message" rows="5" placeholder="Tu mensaje" required></textarea>
+            <button type="submit" class="btn">Enviar Mensaje</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Angel Sami Dorelus. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
