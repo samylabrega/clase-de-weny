@@ -59,16 +59,25 @@
 
     <section id="contact" class="section">
         <h2>Contacto</h2>
-        <form id="contact-form">
-            <input type="text" id="name" placeholder="Tu nombre" required>
-            <input type="email" id="email" placeholder="Tu correo electrónico" required>
-            <textarea id="message" rows="5" placeholder="Tu mensaje" required></textarea>
+        <form id="contact-form" action="https://formspree.io/f/xanyagwa" method="POST">
+            <input type="text" name="name" placeholder="Tu nombre" required>
+            <input type="email" name="_replyto" placeholder="Tu correo electrónico" required>
+            <textarea name="message" rows="5" placeholder="Tu mensaje" required></textarea>
             <button type="submit" class="btn">Enviar Mensaje</button>
         </form>
+        
     </section>
 
     <footer>
         <p>&copy; 2024 Angel Sami Dorelus. Todos los derechos reservados.</p>
+        <div class="social-links">
+            <a href="https://www.instagram.com/NOTSAMY" target="_blank">Instagram</a> |
+            <a href="https://www.youtube.com/@quierobajardepeso4734" target="_blank">YouTube</a> |
+            <a href="https://www.tiktok.com/@NotSamy" target="_blank">TikTok</a>
+        </div>
+        <div class="whatsapp-button">
+            <a href="https://wa.me/18492574777" target="_blank">Chat en WhatsApp</a>
+        </div>
     </footer>
 
     <script src="scripts.js"></script>

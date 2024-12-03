@@ -223,3 +223,40 @@ footer {
     text-align: center;
     font-size: 1rem;
 }
+/* Estilo para las redes sociales */
+.social-links {
+    margin-top: 10px;
+}
+
+.social-links a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.social-links a:hover {
+    color: #B0C4DE;
+}
+
+/* Estilo para el botón flotante de WhatsApp */
+.whatsapp-button a {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #25D366;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.whatsapp-button a:hover {
+    background-color: #128C7E;
+}
