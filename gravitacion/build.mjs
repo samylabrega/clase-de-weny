@@ -201,10 +201,10 @@ const num = (x, d = 2) => { const t = (+x.toFixed(d)).toString(); return t; };
 function sciParts(x, digits = 2) { let e = Math.floor(Math.log10(x)); let m = x / 10 ** e; if (+m.toFixed(digits) >= 10) { m /= 10; e += 1; } return [+m.toFixed(digits), e]; }
 const sci = (x, digits = 2) => { const [m, e] = sciParts(x, digits); return (e === 0 ? num(m, digits) : num(m, digits) + "×10" + sup(e)); };
 function ratio(r) {
-  if (Math.abs(r - 1) < 0.005) return "×1";
+  if (Math.abs(r - 1) < 0.01) return "×1";
   if (r >= 1) return "×" + num(r, r < 10 ? 2 : 1);
   const inv = 1 / r;
-  return Math.abs(inv - Math.round(inv)) < 0.02 ? "×1/" + Math.round(inv) : "×" + num(r, 3);
+  return Math.abs(inv - Math.round(inv)) < 0.005 * inv ? "×1/" + Math.round(inv) : "×" + num(r, 3);
 }
 const force = (s) => G * s.m1 * s.m2 / (s.d * s.d);
 
@@ -220,7 +220,6 @@ const angleOf = (F) => { const e = Math.max(-10, Math.min(4, Math.log2(F / F0)))
 let needle = angleOf(F0), needleRate = 0;
 
 function drawBench() {
-  const F = force(show);
   const pos = [-show.d * PER_M / 2, show.d * PER_M / 2];
   cars.forEach((car, i) => {
     car.g.setAttribute("transform", translateAlong(P, [pos[i], 0, 0]));
@@ -233,7 +232,8 @@ function drawBench() {
     const px = car.side * PILLAR_X, s = Math.sin(needle), c = Math.cos(needle);
     car.needle.setAttribute("d", lineOnTop([px - s * 2.4, c * 2.4], [px + s * (DIAL_R - 2.6), -c * (DIAL_R - 2.6)], DIAL_TOP + 0.2, P));
   });
-  const text = "F = " + sci(F) + " N · " + ratio(F / F0);
+  const Ft = force(target);
+  const text = "F = " + sci(Ft) + " N · " + ratio(Ft / F0);
   if (readout.textContent !== text) readout.textContent = text;
 }
 
@@ -264,27 +264,23 @@ function syncPanel() {
   $("#dm1").textContent = num(target.m1, 1) + " kg"; $("#dm2").textContent = num(target.m2, 1) + " kg"; $("#dd").textContent = num(target.d, 1) + " m";
 }
 
-let frame = 0, last = 0, visible = false, touring = !still.matches, clock = 0, idle = 0;
-const tour = $$("[data-preset]").map((row) => JSON.parse(row.dataset.preset));
-function set(next, fromUser = true) {
+let frame = 0, last = 0, visible = false;
+function set(next) {
   Object.assign(target, next);
-  if (fromUser) { touring = false; clearTimeout(idle); idle = setTimeout(() => { touring = !still.matches; clock = 0; run(); }, 9000); }
   syncPanel();
   if (!visible) { Object.assign(show, target); needle = angleOf(force(show)); needleRate = 0; drawBench(); }
   run();
 }
 for (const key of ["m1", "m2", "d"]) inputs[key].addEventListener("input", () => set({ [key]: +inputs[key].value }));
-$$("[data-preset]").forEach((row) => row.addEventListener("click", () => set(JSON.parse(row.dataset.preset))));
+$$("[data-preset]").forEach((row) => {
+  row.addEventListener("click", () => set(JSON.parse(row.dataset.preset)));
+  row.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); set(JSON.parse(row.dataset.preset)); } });
+});
 $("#reset").addEventListener("click", () => set({ ...BASE }));
 
 function tick(now) {
   const dt = last ? Math.min((now - last) / 1000, 1 / 30) : 1 / 60;
   last = now;
-  if (touring) {
-    clock += dt;
-    const next = tour[Math.floor(clock / 3.2) % tour.length];
-    if (next.m1 !== target.m1 || next.m2 !== target.m2 || next.d !== target.d) { Object.assign(target, next); syncPanel(); }
-  }
   const a = still.matches ? 1 : 1 - Math.exp(-dt / 0.3);
   let moving = false;
   for (const key of ["m1", "m2", "d"]) {
@@ -296,11 +292,10 @@ function tick(now) {
   else for (let i = 0; i < 4; i++) { needleRate += ((want - needle) * 260 - needleRate * 20) * dt / 4; needle += needleRate * dt / 4; }
   if (Math.abs(want - needle) < 0.0005 && Math.abs(needleRate) < 0.0005) { needle = want; needleRate = 0; } else moving = true;
   drawBench();
-  frame = visible && (moving || touring) ? requestAnimationFrame(tick) : 0;
+  frame = visible && moving ? requestAnimationFrame(tick) : 0;
 }
 const run = () => { if (!frame && visible) { last = 0; frame = requestAnimationFrame(tick); } };
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe($(".iso-stage"));
-$(".iso-stage").addEventListener("pointerdown", () => set({}, true));
 syncPanel(); drawBench();
 `;
 
