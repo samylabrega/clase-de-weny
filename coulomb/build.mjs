@@ -281,7 +281,7 @@ const A4 = (() => {
   out.push(`<path class="iso-line" data-tone="lo" d="${k.segment([X1, 0, ZC + 10.3], [X1, 0, ZC + 30], P)}" data-mast/>`);
   out.push(`<path class="iso-line" data-tone="lo" data-drop d=""/>`);
   out.push(`<path class="farrow" data-c="fr" data-arrow="r"/><path class="farrow" data-c="f12" data-arrow="12"/><path class="farrow" data-c="f13" data-arrow="13"/>`);
-  out.push(`<text class="flabel" data-c="f12" data-label="12">F₁₂</text><text class="flabel" data-c="f13" data-label="13">F₁₃</text><text class="flabel" data-c="fr" data-label="r">F total</text>`);
+  out.push(`<text class="flabel" data-c="f12" data-label="12">F₁₂</text><text class="flabel" data-c="f13" data-label="13">F₁₃</text><text class="flabel" data-c="fr" data-label="r">FR</text>`);
   const svg = k.figureSvg({
     width: W,
     height: H,
@@ -292,28 +292,114 @@ const A4 = (() => {
 })();
 
 // =====================================================================
-// Fig 5 · mini dibujo para el paso 2
+// Mini benches for the worked problems (paso 2 · dibujo)
+// charges: [{ x (m), sign, r, name }], arrows: [{ i, to (m, signed length in world units), label, c, lift }]
 // =====================================================================
-const A5 = (() => {
-  const M = 40;
-  const X1 = -40;
-  const plan = { x: -62, y: -30, w: 124, d: 64, r: 6 };
-  const P = k.fitProjection([...k.boxCorners(plan, -14, 0), [X1, 0, 62], [X1 + 2 * M, 0, 62]], 420, 260, { pad: 18, azimuth: 66 });
+function miniBench({ M, charges, arrows, dists, label, w = 420, h = 240 }) {
+  const xs = charges.map((c) => c.x * M);
+  const span = Math.max(...xs);
+  const X1 = -span / 2;
+  const ZC = CAP_TOP + 8;
+  const left = Math.min(0, ...arrows.map((a) => xs[a.i] + a.to)) + X1;
+  const right = Math.max(span, ...arrows.map((a) => xs[a.i] + a.to)) + X1;
+  const plan = { x: X1 - 26, y: -30, w: span + 52, d: 64, r: 6 };
+  const P = k.fitProjection([...k.boxCorners(plan, -14, 0), [left - 6, 0, ZC + 26], [right + 6, 0, ZC + 26], [X1, 0, ZC + 34]], w, h, { pad: 16, azimuth: 66 });
   const out = [plateSvg(P, plan, 10)];
-  out.push(rulerSvg(P, X1, M, 2, 16));
-  out.push(`<path class="d-band" d="${k.onTop([[X1, 16.4], [X1 + 2 * M, 16.4], [X1 + 2 * M, 18.2], [X1, 18.2]], 0.9, P, true)}"/>`);
-  out.push(railSvg(P, -52, 52, 0));
-  out.push(standSvg(P, X1, 0, { pointer: true }) + ballSvg(P, [X1, 0, CAP_TOP + 9], 9, "pos"));
-  out.push(standSvg(P, X1 + 2 * M, 0, { pointer: true }) + ballSvg(P, [X1 + 2 * M, 0, CAP_TOP + 7.5], 7.5, "pos"));
-  out.push(`<path class="farrow" data-c="f" d="${arrowD([X1 - 7, 0, CAP_TOP + 9], [X1 - 34, 0, CAP_TOP + 9], P)}"/>`);
-  out.push(`<path class="farrow" data-c="f" d="${arrowD([X1 + 2 * M + 6, 0, CAP_TOP + 7.5], [X1 + 2 * M + 33, 0, CAP_TOP + 7.5], P)}"/>`);
-  return k.figureSvg({
-    width: 420,
-    height: 260,
-    label: "Dibujo del problema: Q1 = 4 µC a la izquierda y Q2 = 2 µC a 2 m; como las dos son positivas, las flechas apuntan hacia afuera: se repelen.",
-    body: out,
-  });
+  out.push(rulerSvg(P, X1, M, Math.round(span / M), 16, { from: plan.x + 6, to: plan.x + plan.w - 6 }));
+  for (const [a, b] of dists) out.push(`<path class="d-band" d="${k.onTop([[X1 + xs[a], 16.4], [X1 + xs[b], 16.4], [X1 + xs[b], 18.2], [X1 + xs[a], 18.2]], 0.9, P, true)}"/>`);
+  out.push(railSvg(P, plan.x + 10, plan.x + plan.w - 14, 0));
+  charges.forEach((c, i) => out.push(standSvg(P, X1 + xs[i], 0, { pointer: true }) + ballSvg(P, [X1 + xs[i], 0, CAP_TOP + c.r], c.r, c.sign)));
+  const text = (p, s, c, dy = 0) => {
+    const [x, y] = k.iso(p, P);
+    return `<text class="flabel" data-c="${c}" x="${f1(x)}" y="${f1(y + dy)}" text-anchor="middle">${s}</text>`;
+  };
+  for (const a of arrows) {
+    const c = charges[a.i];
+    const x0 = X1 + xs[a.i];
+    const z = CAP_TOP + c.r + (a.lift || 0);
+    const s = Math.sign(a.to);
+    const start = a.lift ? x0 : x0 + s * (c.r + 0.6);
+    out.push(`<path class="farrow" data-c="${a.c}" d="${arrowD([start, 0, z], [start + a.to, 0, z], P, 2, 6.5)}"/>`);
+    out.push(text([start + a.to / 2, 0, z], a.label, a.c, -8));
+  }
+  charges.forEach((c, i) => out.push(text([X1 + xs[i], 0, CAP_TOP + 2 * c.r], c.name, "q", -14)));
+  for (const [a, b] of dists) out.push(text([X1 + (xs[a] + xs[b]) / 2, 17.3, 0.9], (charges[b].x - charges[a].x) + " m", "d", 13));
+  return k.figureSvg({ width: w, height: h, label, body: out });
+}
+
+// A block of matter with charge spread through it (Problema C).
+const CUBE = (() => {
+  const S0 = 56;
+  const plan = { x: -60, y: -46, w: 120, d: 92, r: 6 };
+  const cube = { x: -S0 / 2, y: -S0 / 2, w: S0, d: S0, r: 1.2 };
+  const P = k.fitProjection([...k.boxCorners(plan, -14, 0), ...k.boxCorners(cube, 0, S0 + 6)], 420, 260, { pad: 18, azimuth: 52 });
+  const out = [plateSvg(P, plan, 10)];
+  out.push(`<path class="iso-halo" d="${k.haloOf(cube, 0, 6, P)}"/>`);
+  out.push(S(k.slabOf(cube, 0, S0, P, 3, 1.2), { tone: "mid", inner: L(k.sideSeam(cube, S0 / 2, P, 3), { tone: "faint" }) }));
+  out.push(L(k.planOutline(k.insetPlan(cube, 4), S0, P, 3), { tone: "faint" }));
+  // charges: a regular lattice on the top and the near faces, jittered a little
+  const rnd = (i) => ((Math.sin(i * 12.9898) * 43758.5453) % 1 + 1) % 1;
+  const pts = [];
+  let n = 0;
+  for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) pts.push([cube.x + 9 + i * 12.6 + (rnd(n++) - 0.5) * 4, cube.y + 9 + j * 12.6 + (rnd(n++) - 0.5) * 4, S0]);
+  for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) pts.push([cube.x + 9 + i * 12.6 + (rnd(n++) - 0.5) * 4, cube.y + S0, 10 + j * 15 + (rnd(n++) - 0.5) * 4]);
+  for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) pts.push([cube.x + S0, cube.y + 9 + i * 12.6 + (rnd(n++) - 0.5) * 4, 10 + j * 15 + (rnd(n++) - 0.5) * 4]);
+  out.push(pts.map((p) => { const [x, y] = k.iso(p, P); return `<circle class="qdot" cx="${f1(x)}" cy="${f1(y)}" r="2.1"/>`; }).join(""));
+  const [tx, ty] = k.iso([0, 0, S0 + 6], P);
+  out.push(`<text class="flabel" data-c="q" x="${f1(tx)}" y="${f1(ty - 26)}" text-anchor="middle">Q = 6×10⁻¹⁵ C</text>`);
+  const [vx, vy] = k.iso([cube.x + S0, cube.y + S0, 0], P);
+  out.push(`<text class="flabel" data-c="d" x="${f1(vx)}" y="${f1(vy + 22)}" text-anchor="middle">V = ?</text>`);
+  return k.figureSvg({ width: 420, height: 260, label: "Un bloque de materia sobre una base. Puntos rojos repartidos por sus caras representan la carga Q distribuida en su volumen V.", body: out });
 })();
+
+// Flat x-y axis with the forces on Q1 (paso 7), drawn to scale (18 → 2.25).
+function axisSvg(q3neg) {
+  const W2 = 420, H2 = 190, ox = 300, oy = 92, s = 11; // px per 10⁻³ N
+  const f12 = -18, f13 = q3neg ? 2.25 : -2.25, fr = f12 + f13;
+  const arr = (x0, x1, y, c, lab, below) => {
+    const d = Math.sign(x1 - x0), hx = x1 - d * 8;
+    return `<path class="ax-arrow" data-c="${c}" d="M${x0} ${y - 1.4}H${hx}V${y - 5}L${x1} ${y}L${hx} ${y + 5}V${y + 1.4}H${x0}Z"/><text class="flabel" data-c="${c}" x="${(x0 + x1) / 2}" y="${below ? y + 18 : y - 9}" text-anchor="middle">${lab}</text>`;
+  };
+  const p = [];
+  p.push(`<path class="ax" d="M16 ${oy}H${W2 - 16}M${ox} 16V${H2 - 16}"/><path class="ax" d="M${W2 - 22} ${oy - 4}L${W2 - 16} ${oy}L${W2 - 22} ${oy + 4}M${ox - 4} 22L${ox} 16L${ox + 4} 22"/>`);
+  p.push(`<text class="ax-t" x="${W2 - 14}" y="${oy - 8}" text-anchor="end">x</text><text class="ax-t" x="${ox + 10}" y="24">y</text>`);
+  p.push(arr(ox, ox + f12 * s, oy - 30, "f12", "F₁₂ = 18"));
+  p.push(arr(q3neg ? ox : ox + f12 * s, q3neg ? ox + f13 * s : ox + (f12 + f13) * s, q3neg ? oy - 30 : oy - 30, "f13", "F₁₃ = 2.25", true));
+  p.push(arr(ox, ox + fr * s, oy + 34, "fr", `FR = ${q3neg ? "15.75" : "20.25"} ×10⁻³ N`, true));
+  p.push(`<circle class="ax-q" data-q="pos" cx="${ox}" cy="${oy}" r="9"/><text class="ax-sign" x="${ox}" y="${oy + 4.5}" text-anchor="middle">+</text><text class="ax-t" x="${ox + 13}" y="${oy + 18}">Q₁</text>`);
+  return `<svg class="axis" viewBox="0 0 ${W2} ${H2}" role="img" aria-label="Eje x-y con Q₁ en el origen. F₁₂ de 18 por 10 a la menos 3 newton apunta a la izquierda; F₁₃ de 2.25 apunta ${q3neg ? "a la derecha, se resta" : "a la izquierda, se suma"}; la resultante FR vale ${q3neg ? "15.75" : "20.25"} por 10 a la menos 3 newton hacia la izquierda.">${p.join("")}</svg>`;
+}
+
+const MINI = {
+  pos: miniBench({
+    M: 30,
+    charges: [{ x: 0, sign: "pos", r: 8.5, name: "Q₁" }, { x: 2, sign: "pos", r: 7, name: "Q₂" }, { x: 4, sign: "pos", r: 5.6, name: "Q₃" }],
+    arrows: [{ i: 0, to: -34, label: "F₁₂", c: "f12" }, { i: 0, to: -12, label: "F₁₃", c: "f13", lift: 28 }],
+    dists: [[0, 1], [1, 2]],
+    label: "Caso 1: Q1, Q2 y Q3 positivas, 2 m entre cada una. Sobre Q1, F12 y F13 apuntan a la izquierda.",
+  }),
+  neg: miniBench({
+    M: 30,
+    charges: [{ x: 0, sign: "pos", r: 8.5, name: "Q₁" }, { x: 2, sign: "pos", r: 7, name: "Q₂" }, { x: 4, sign: "neg", r: 5.6, name: "Q₃" }],
+    arrows: [{ i: 0, to: -34, label: "F₁₂", c: "f12" }, { i: 0, to: 12, label: "F₁₃", c: "f13", lift: 28 }],
+    dists: [[0, 1], [1, 2]],
+    label: "Caso 2: Q3 negativa. Sobre Q1, F12 apunta a la izquierda y F13 a la derecha, hacia Q3.",
+  }),
+  A: miniBench({
+    M: 24,
+    charges: [{ x: 0, sign: "pos", r: 7, name: "Q = ?" }, { x: 3, sign: "pos", r: 7, name: "Q = ?" }],
+    arrows: [{ i: 0, to: -26, label: "F₁₂", c: "f" }, { i: 1, to: 26, label: "F₂₁", c: "f" }],
+    dists: [[0, 1]],
+    label: "Problema A: dos cargas iguales a 3 m que se repelen; flechas hacia afuera.",
+  }),
+  B: miniBench({
+    M: 14,
+    charges: [{ x: 0, sign: "pos", r: 7.5, name: "Q₁" }, { x: 6, sign: "neg", r: 7.5, name: "Q₂ = ?" }],
+    arrows: [{ i: 0, to: 22, label: "F₁₂", c: "f" }, { i: 1, to: -22, label: "F₂₁", c: "f" }],
+    dists: [[0, 1]],
+    label: "Problema B: Q1 positiva y Q2 a 6 m; se atraen, flechas una hacia la otra.",
+  }),
+};
 
 // =====================================================================
 // Page
@@ -379,11 +465,11 @@ const fig4 = plate({
   fig: "Fig 4",
   title: "Tres cargas",
   hint: "Toca una esfera para cambiar su signo",
-  readout: "F = 2.03 × 10⁻² N ←",
+  readout: "FR = 20.25 × 10⁻³ N ←",
   keys: [
     { mark: "green", label: "F₁₂ (Q₂ sobre Q₁)" },
     { mark: "amber", label: "F₁₃ (Q₃ sobre Q₁)" },
-    { mark: "lit", label: "F total sobre Q₁" },
+    { mark: "lit", label: "FR sobre Q₁" },
   ],
   body:
     card("fig4", A4.svg) +
@@ -391,20 +477,117 @@ const fig4 = plate({
     <div class="sum" data-sum></div>`,
 });
 
-const STEPS = [
-  { t: "Datos", b: `<ul class="data"><li><span class="t-q1">Q₁ = 4 µC = 4 × 10⁻⁶ C</span></li><li><span class="t-q2">Q₂ = 2 µC = 2 × 10⁻⁶ C</span></li><li><span class="t-d">d = 2 m</span></li><li><span class="t-k">k = 9 × 10⁹ N·m²/C²</span></li><li><span class="t-f">F = ?</span></li></ul><p class="tip">µ (micro) = 10⁻⁶. Pasa siempre a coulombs (C) y metros (m).</p>` },
-  { t: "Dibujo", b: `<div class="mini">${A5}</div><p class="tip">Mismo signo (+ y +) → se repelen: flechas hacia afuera.</p>` },
-  { t: "Fórmula", b: `<div class="eq big"><span class="t-f">F</span> = <span class="t-k">k</span> · <span class="t-q1">|Q₁|</span> · <span class="t-q2">|Q₂|</span> / <span class="t-d">d²</span></div><p class="tip">Usa los valores sin signo. El signo solo dice si atraen o repelen.</p>` },
-  { t: "Sustitución", b: `<div class="eq big"><span class="t-f">F</span> = <span class="t-k">9×10⁹</span> · <span class="t-q1">4×10⁻⁶</span> · <span class="t-q2">2×10⁻⁶</span> / <span class="t-d">2²</span></div><p class="tip"><span class="t-d">2² = 4</span>. ¡No olvides elevar la distancia al cuadrado!</p>` },
-  { t: "Exponentes", b: `<div class="calc"><div><b>Números:</b> 9 · 4 · 2 / 4 = <b>18</b></div><div><b>Potencias:</b> 10⁹ · 10⁻⁶ · 10⁻⁶ = <span class="nw">10<sup>9 − 6 − 6</sup></span> = <b>10⁻³</b></div><div class="hl">F = 18 × 10⁻³ N</div></div><p class="tip">Al multiplicar potencias de 10, los exponentes se <b>suman</b>.</p>` },
-  { t: "Resultado", b: `<div class="calc"><div>18 × 10⁻³ = <b>1.8 × 10⁻² N</b></div><div class="hl big">F = 0.018 N (repulsión)</div></div><p class="tip">Corre la coma un lugar a la izquierda → el exponente sube 1.</p>` },
-];
+// ---------- Hojas resueltas (estilo del profesor) ----------
+const u = (s) => `<span class="un">${s}</span>`;
+const ex = (s) => `<span class="nw">10<sup>${s}</sup></span>`;
+const KU = u("N·m²/C²");
+function hoja({ id, tag, title, enunciado, datos, hallar, steps, revision }) {
+  return `<article class="hoja" id="${id}" data-mode="all">
+<header class="hoja-h"><span class="hoja-tag">${tag}</span><h3>${title}</h3><button type="button" class="mode" data-mode-btn>Paso a paso</button></header>
+<p class="enun">${enunciado}</p>
+<div class="hoja-g">
+<aside class="datos"><h4>Datos</h4><ul>${datos.map((d) => `<li>${d}</li>`).join("")}</ul><h4>HALLAR:</h4><ul><li>${hallar}</li></ul></aside>
+<ol class="sol">${steps.map((s, i) => `<li class="paso" data-i="${i}"><h5><span>${i + 2}</span>${s.t}</h5>${s.b}</li>`).join("")}
+<li class="paso rev" data-i="${steps.length}"><h5><span>✓</span>Revisión</h5><dl>${revision.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join("")}</dl></li></ol>
+</div>
+<div class="hoja-nav"><button type="button" data-prev>← Anterior</button><span data-at></span><button type="button" data-next>Siguiente →</button></div>
+</article>`;
+}
 
-const fig5 = `<figure class="iso-figure"><div class="iso-plate stepper"><div class="iso-plate-corners" aria-hidden="true"><span class="iso-plate-corner" data-corner="fig">Fig 5</span><span class="iso-plate-corner" data-corner="title">Paso a paso</span><span class="iso-plate-corner" data-corner="hint">Siguiente →</span><span class="iso-plate-corner" data-corner="readout" data-step-readout>paso 1 de 6</span></div>
-<ol class="steps-nav">${STEPS.map((s, i) => `<li><button type="button" data-goto="${i}"${i === 0 ? ' aria-current="step"' : ""}><span>${i + 1}</span>${s.t}</button></li>`).join("")}</ol>
-<div class="steps">${STEPS.map((s, i) => `<section class="step" data-step="${i}"${i ? " hidden" : ""}><h3><span>${i + 1}</span>${s.t}</h3>${s.b}</section>`).join("")}</div>
-<div class="ctl"><button type="button" data-prev>← Anterior</button><button type="button" data-next>Siguiente →</button></div>
-</div><figcaption class="iso-legend"><span class="iso-caption">Problema: Q₁ = 4 µC y Q₂ = 2 µC separadas 2 m. ¿Cuánto vale la fuerza? (Es F₁₂ de la Fig 4.)</span></figcaption></figure>`;
+const HOJA_PIZ = hoja({
+  id: "h-piz",
+  tag: "Pizarra",
+  title: "Tres cargas en línea: fuerza resultante sobre Q₁",
+  enunciado: "Q₁ = 4 µC, Q₂ = 2 µC y Q₃ = 1 µC en línea, 2 m entre Q₁ y Q₂ y 2 m entre Q₂ y Q₃. Hallar la fuerza resultante sobre Q₁.",
+  datos: ["Q₁ = 4 µC = 4×10⁻⁶ C", "Q₂ = 2 µC = 2×10⁻⁶ C", "Q₃ = 1 µC = 1×10⁻⁶ C", "d₁₂ = 2 m", "d₁₃ = 2 m + 2 m = 4 m", "k = 9×10⁹ N·m²/C²"],
+  hallar: "FR sobre Q₁",
+  steps: [
+    { t: "Dibujo", b: `<div class="minis"><figure>${MINI.pos}<figcaption>Caso 1 · todas <b class="t-pos">+</b></figcaption></figure><figure>${MINI.neg}<figcaption>Caso 2 · Q₃ <b class="t-neg">−</b></figcaption></figure></div><p class="tip">F₁₂ = fuerza de Q₂ sobre Q₁. Iguales se repelen (flecha se aleja), distintas se atraen (flecha va hacia la otra).</p>` },
+    { t: "Fórmula", b: `<div class="eq big"><span class="t-f">F</span> = <span class="t-k">k</span>·<span class="t-q1">|Q₁|</span>·<span class="t-q2">|Q₂|</span> / <span class="t-d">d²</span></div><p class="tip">Una vez para F₁₂ y otra para F₁₃. Se usan los valores sin signo.</p>` },
+    { t: "Sustitución", b: `<div class="calc"><div><b class="t-f">F₁₂</b> = (9×10⁹ ${KU})(4×10⁻⁶ ${u("C")})(2×10⁻⁶ ${u("C")}) / (2 ${u("m")})²</div><div class="ind">= 72×10⁹⁻⁶⁻⁶ ${u("N·m²")} / 4 ${u("m²")}</div><div><b style="color:var(--c-f13)">F₁₃</b> = (9×10⁹ ${KU})(4×10⁻⁶ ${u("C")})(1×10⁻⁶ ${u("C")}) / (4 ${u("m")})²</div><div class="ind">= 36×10⁹⁻⁶⁻⁶ ${u("N·m²")} / 16 ${u("m²")}</div></div><p class="tip">C·C se cancela con C² de k; m² arriba con m² abajo → queda N.</p>` },
+    { t: "Exponentes", b: `<div class="calc"><div>F₁₂ = 72×${ex("9−6−6")} / 4 = 72×10⁻³ / 4</div><div>F₁₃ = 36×${ex("9−6−6")} / 16 = 36×10⁻³ / 16</div></div><p class="tip">Multiplicar potencias → <b>sumar</b> exponentes: 9 + (−6) + (−6) = −3.</p>` },
+    { t: "Resultado", b: `<div class="calc"><div class="hl">F₁₂ = 18×10⁻³ N</div><div class="hl" style="color:var(--c-f13)">F₁₃ = 2.25×10⁻³ N</div></div>` },
+    { t: "Eje x-y y resultante", b: `<div class="axes"><figure>${axisSvg(false)}<figcaption><b>Caso 1</b>: mismo lado → <b>se suman</b><br>FR = 18×10⁻³ + 2.25×10⁻³ = <b class="t-f">20.25×10⁻³ N ←</b></figcaption></figure><figure>${axisSvg(true)}<figcaption><b>Caso 2</b>: lados opuestos → <b>se restan</b><br>FR = 18×10⁻³ − 2.25×10⁻³ = <b class="t-f">15.75×10⁻³ N ←</b></figcaption></figure></div><p class="tip">Con Q₃ negativa, Q₃ <b>atrae</b> a Q₁: F₁₃ gira y apunta a la derecha. Gana la más grande (F₁₂), por eso FR sigue a la izquierda.</p>` },
+  ],
+  revision: [
+    ["Signo", "F₁₂ a la izquierda (repulsión). F₁₃ a la izquierda si Q₃ +, a la derecha si Q₃ −. FR hacia la izquierda en los dos casos."],
+    ["Unidad", "N·m²/C² · C · C / m² = N ✓"],
+    ["Orden", "10⁻³ N (milésimas de newton): normal para cargas de µC a metros. F₁₃ < F₁₂ porque Q₃ es menor y está al doble de distancia (÷4)."],
+  ],
+});
+
+const HOJA_A = hoja({
+  id: "h-a",
+  tag: "Problema A",
+  title: "Dos cargas iguales: hallar Q",
+  enunciado: "Dos cargas iguales separadas 300 cm se repelen con F = 4×10⁻³ N. Hallar el valor de cada carga.",
+  datos: ["F = 4×10⁻³ N", "d = 300 cm = 3 m", "Q₁ = Q₂ = Q", "k = 9×10⁹ N·m²/C²"],
+  hallar: "Q",
+  steps: [
+    { t: "Dibujo", b: `<div class="mini">${MINI.A}</div><p class="tip">Se repelen → mismo signo. Flechas hacia afuera.</p>` },
+    { t: "Fórmula y despeje", b: `<div class="calc"><div>F = k·Q·Q / d² = k·Q² / d²</div><div>F·d² = k·Q²</div><div class="eq big">Q² = F·d² / k</div><div class="eq">Q = √(F·d² / k)</div></div>` },
+    { t: "Sustitución", b: `<div class="calc"><div>Q² = (4×10⁻³ ${u("N")})(3 ${u("m")})² / (9×10⁹ ${KU})</div><div class="ind">= (4×10⁻³ ${u("N")})(9 ${u("m²")}) / (9×10⁹ ${KU})</div><div class="ind">= 36×10⁻³ / 9×10⁹ ${u("C²")}</div></div><p class="tip">N·m² ÷ (N·m²/C²) = C².</p>` },
+    { t: "Exponentes", b: `<div class="calc"><div>Q² = (36/9)×${ex("−3−9")} = 4×10⁻¹² C²</div><div>Q = √4 × √10⁻¹² = 2×${ex("−12÷2")} = 2×10⁻⁶ C</div></div><p class="tip">Dividir potencias → <b>restar</b> exponentes. Raíz → exponente <b>÷2</b>, por eso debe ser <b>par</b>. Si te sale impar (p. ej. 40×10⁻¹³), corre la coma: 4×10⁻¹² ✓.</p>` },
+    { t: "Resultado", b: `<div class="calc"><div class="hl big">Q = 2×10⁻⁶ C = 2 µC</div></div><p class="tip">Las dos valen 2 µC (las dos + o las dos −).</p>` },
+  ],
+  revision: [
+    ["Signo", "Se repelen → mismo signo: ambas +2 µC o ambas −2 µC ✓"],
+    ["Unidad", "√C² = C ✓"],
+    ["Orden", "µC (10⁻⁶): típico. Prueba: 9×10⁹·(2×10⁻⁶)²/9 = 4×10⁻³ N ✓"],
+  ],
+});
+
+const HOJA_B = hoja({
+  id: "h-b",
+  tag: "Problema B",
+  title: "Conozco Q₁: hallar Q₂",
+  enunciado: "La fuerza de atracción entre dos cargas es F = 3.6×10⁻² N y están separadas d = 600 cm. Si Q₁ = 4×10⁻⁶ C, hallar Q₂.",
+  datos: ["F = 3.6×10⁻² N (atracción)", "d = 600 cm = 6 m", "Q₁ = 4×10⁻⁶ C", "k = 9×10⁹ N·m²/C²"],
+  hallar: "Q₂",
+  steps: [
+    { t: "Dibujo", b: `<div class="mini">${MINI.B}</div><p class="tip">Se atraen → signos distintos. Flechas una hacia la otra.</p>` },
+    { t: "Fórmula y despeje", b: `<div class="calc"><div>F = k·|Q₁|·|Q₂| / d²</div><div>F·d² = k·|Q₁|·|Q₂|</div><div class="eq big">|Q₂| = F·d² / (k·|Q₁|)</div></div>` },
+    { t: "Sustitución", b: `<div class="calc"><div>|Q₂| = (3.6×10⁻² ${u("N")})(6 ${u("m")})² / [(9×10⁹ ${KU})(4×10⁻⁶ ${u("C")})]</div><div class="ind">= (3.6×10⁻²)(36 ${u("m²")}) ${u("N")} / (36×10⁹⁻⁶ ${u("N·m²/C")})</div></div><p class="tip">N·m² ÷ (N·m²/C²·C) = C.</p>` },
+    { t: "Exponentes", b: `<div class="calc"><div>Abajo: 9×4 = 36 y ${ex("9−6")} = 10³</div><div>Arriba: 3.6×36 = 129.6 → 129.6×10⁻²</div><div>|Q₂| = (129.6/36)×${ex("−2−3")} = 3.6×10⁻⁵ C</div></div><p class="tip">Abajo se multiplica (sumar), luego se divide (restar): −2 − 3 = −5.</p>` },
+    { t: "Resultado", b: `<div class="calc"><div class="hl big">Q₂ = −3.6×10⁻⁵ C</div><div>= −36 µC (si Q₁ es +)</div></div>` },
+  ],
+  revision: [
+    ["Signo", "Atracción → Q₂ de signo contrario a Q₁: negativa ✓"],
+    ["Unidad", "C ✓"],
+    ["Orden", "10⁻⁵ C = 36 µC. Prueba: 9×10⁹·4×10⁻⁶·3.6×10⁻⁵ / 36 = 3.6×10⁻² N ✓"],
+  ],
+});
+
+const HOJA_C = hoja({
+  id: "h-c",
+  tag: "Problema C",
+  title: "Densidad de carga: hallar el volumen",
+  enunciado: "Hallar el volumen de una masa que contiene una carga Q = 6×10⁻¹⁵ C con densidad de carga ρ = 3×10⁻¹⁹ C/m³.",
+  datos: ["Q = 6×10⁻¹⁵ C", "ρ = 3×10⁻¹⁹ C/m³"],
+  hallar: "V",
+  steps: [
+    { t: "Dibujo", b: `<div class="mini">${CUBE}</div><p class="tip">ρ dice cuánta carga hay en cada m³ del cuerpo.</p>` },
+    { t: "Fórmula y despeje", b: `<div class="calc"><div class="eq big">ρ = Q / V</div><div>ρ·V = Q</div><div class="eq big">V = Q / ρ</div></div>` },
+    { t: "Sustitución", b: `<div class="calc"><div>V = 6×10⁻¹⁵ ${u("C")} / 3×10⁻¹⁹ ${u("C/m³")}</div></div><p class="tip">C ÷ (C/m³) = C · m³/C = m³.</p>` },
+    { t: "Exponentes", b: `<div class="calc"><div>V = (6/3)×${ex("−15−(−19)")} = 2×${ex("−15+19")} = 2×10⁴</div></div><p class="tip">¡Cuidado con el doble signo! Restar −19 es <b>sumar</b> 19.</p>` },
+    { t: "Resultado", b: `<div class="calc"><div class="hl big">V = 2×10⁴ m³</div><div>= 20 000 m³</div></div>` },
+  ],
+  revision: [
+    ["Signo", "Volumen siempre positivo ✓ (Q y ρ tienen el mismo signo)"],
+    ["Unidad", "m³ ✓"],
+    ["Orden", "ρ es diminuta (10⁻¹⁹), así que hace falta mucho volumen para juntar Q: 10⁴ m³ tiene sentido. Prueba: 3×10⁻¹⁹ · 2×10⁴ = 6×10⁻¹⁵ C ✓"],
+  ],
+});
+
+const PROF = [
+  ["Datos", "a la izquierda, unidades convertidas (cm ÷ 100 = m; µ = 10⁻⁶). Debajo: HALLAR."],
+  ["Dibujo", "cargas en línea con signo, distancias y flechas F₁₂ (de Q₂ sobre Q₁)."],
+  ["Fórmula", "escrita primero y despejada si hace falta."],
+  ["Sustitución", "con unidades: N·m²/C², C, m²."],
+  ["Exponentes", "primero la suma o resta (10⁹⁻⁶⁻⁶), luego el resultado (10⁻³)."],
+  ["Resultado", "en notación científica, con unidad."],
+  ["Eje x-y", "flechas sobre el eje; FR suma si van al mismo lado, resta si van opuestas."],
+];
 
 const section = (n, title, lead, inner) => `<section class="sec"><h2><span class="n">${n}</span>${title}</h2><p class="lead">${lead}</p>${inner}</section>`;
 
@@ -413,12 +596,15 @@ const body = `
 ${section(1, "El átomo", `El núcleo tiene <b class="t-pos">protones (+)</b> y <b>neutrones (0)</b>. Afuera giran los <b class="t-neg">electrones (−)</b>. <b class="t-pos">+</b> y <b class="t-neg">−</b> se atraen: por eso el núcleo los sujeta.`, fig1 + `<ul class="facts"><li>Átomo neutro: nº protones = nº electrones.</li><li>Pierde e⁻ → ion <b class="t-pos">+</b>. Gana e⁻ → ion <b class="t-neg">−</b>.</li><li>Anillo de adentro, más cerca → atracción más fuerte.</li></ul>`)}
 ${section(2, "Iguales se repelen, opuestas se atraen", `Mira las flechas: <b>apuntan hacia afuera</b> si se repelen y <b>hacia la otra carga</b> si se atraen.`, fig2 + `<div class="rules"><div><span class="chip pos">+</span><span class="chip pos">+</span>← →<b>repelen</b></div><div><span class="chip neg">−</span><span class="chip neg">−</span>← →<b>repelen</b></div><div><span class="chip pos">+</span><span class="chip neg">−</span>→ ←<b>atraen</b></div></div>`)}
 ${section(3, "La fórmula, desarmada", `Cada color es una parte. Cambia una y mira qué le pasa a <b class="t-f">F</b>.`, fig3 + `<div class="rules two"><div><b>×2 carga</b> → <b class="t-f">F ×2</b></div><div><b>×2 las dos cargas</b> → <b class="t-f">F ×4</b></div><div><b>×2 distancia</b> → <b class="t-f">F ÷4</b></div><div><b>÷2 distancia</b> → <b class="t-f">F ×4</b></div></div>`)}
-${section(4, "Tres cargas en línea", `Calcula cada fuerza sobre <b>Q₁</b> por separado y súmalas como flechas: misma dirección se suman, contrarias se restan.`, fig4)}
-${section(5, "Resolver un problema", `Siempre los mismos seis pasos.`, fig5)}
+${section(4, "Los 7 pasos del profe", `Úsalos en todos los ejercicios. Cada hoja de abajo los sigue; con <b>Paso a paso</b> los ves uno por uno.`, `<ol class="prof">${PROF.map(([a, b], i) => `<li><span>${i + 1}</span><div><b>${a}</b>: ${b}</div></li>`).join("")}</ol><div class="prefix"><div><b>mili</b> m = 10⁻³</div><div><b>micro</b> µ = 10⁻⁶</div><div><b>nano</b> n = 10⁻⁹</div><div><b>pico</b> p = 10⁻¹²</div></div>`)}
+${section(5, "Ejemplo de la pizarra: tres cargas", `Cada fuerza sobre <b>Q₁</b> se calcula por separado; luego se juntan como flechas. Toca Q₃ para cambiar su signo y mira cómo gira F₁₃.`, fig4 + HOJA_PIZ)}
+${section(6, "Problema A · cargas iguales", `Las dos cargas son la misma incógnita: la fórmula queda con <b>Q²</b>.`, HOJA_A)}
+${section(7, "Problema B · una carga conocida", `Se despeja la carga que falta. El signo sale de “atracción”.`, HOJA_B)}
+${section(8, "Problema C · densidad de carga", `<b>ρ = Q / V</b>: carga por cada metro cúbico (C/m³). Tres letras, se despeja la que falta.`, `<div class="rules"><div><b>ρ = Q / V</b></div><div><b>Q = ρ · V</b></div><div><b>V = Q / ρ</b></div></div>` + HOJA_C)}
 <section class="sec"><h2><span class="n">★</span>Para el examen</h2><div class="cheat">
-<div><b>k</b> = 9 × 10⁹ N·m²/C²</div><div><b>µC</b> = 10⁻⁶ C · <b>nC</b> = 10⁻⁹ C</div><div><b>d</b> siempre en metros (cm ÷ 100)</div><div>Exponentes: multiplicar → <b>sumar</b>; dividir → <b>restar</b></div><div><b>d</b> al <b>cuadrado</b> en el denominador</div><div>Signo: iguales → repelen; distintos → atraen</div>
+<div><b>k</b> = 9 × 10⁹ N·m²/C²</div><div><b>mC</b> 10⁻³ · <b>µC</b> 10⁻⁶ · <b>nC</b> 10⁻⁹ · <b>pC</b> 10⁻¹²</div><div>Cargas iguales: <b>Q = √(F·d²/k)</b> (exponente par)</div><div>Una carga: <b>Q₂ = F·d² / (k·Q₁)</b></div><div>Densidad: <b>ρ = Q/V</b> → <b>V = Q/ρ</b></div><div>FR: mismo lado <b>suma</b>; opuestos <b>resta</b></div><div><b>d</b> siempre en metros (cm ÷ 100)</div><div>Exponentes: multiplicar → <b>sumar</b>; dividir → <b>restar</b></div><div><b>d</b> al <b>cuadrado</b> en el denominador</div><div>Signo: iguales → repelen; distintos → atraen</div>
 </div></section>
-<p class="foot">k exacta ≈ 8.99 × 10⁹; en clase se redondea a 9 × 10⁹. Las fuerzas de la Fig 3 se calculan con 9 × 10⁹.</p>
+<p class="foot">k exacta ≈ 8.99 × 10⁹; en clase se redondea a 9 × 10⁹. Todas las cuentas de esta página usan 9 × 10⁹.</p>
 `;
 
 const EXTRA_CSS = `
@@ -510,6 +696,47 @@ button[data-s="neg"]{color:#fff;background:var(--neg-1);border-color:var(--neg-1
 .cheat>div{background:var(--anatomy-card);box-shadow:0 0 0 1px var(--anatomy-faint);padding:10px 12px;font-size:14px}
 .nw{white-space:nowrap}
 .foot{font-size:12px;color:var(--anatomy-muted);margin-top:28px}
+.qdot{fill:var(--pos-1);stroke:var(--anatomy-card);stroke-width:.8}
+.flabel[data-c="q"]{fill:var(--anatomy-strong)}
+.ax{fill:none;stroke:var(--anatomy-muted);stroke-width:1.2}
+.ax-t{font:600 12px/1 ui-sans-serif,system-ui,sans-serif;fill:var(--anatomy-muted)}
+.ax-arrow{stroke:var(--anatomy-card);stroke-width:.8}
+.ax-arrow[data-c="f12"]{fill:var(--c-f)}.ax-arrow[data-c="f13"]{fill:var(--c-f13)}.ax-arrow[data-c="fr"]{fill:var(--c-fr)}
+.ax-q{fill:var(--pos-1)}.ax-sign{font:700 14px/1 ui-sans-serif,system-ui,sans-serif;fill:#fff}
+.axis{width:100%;height:auto;display:block}
+.hoja{margin-top:22px;background:var(--anatomy-card);box-shadow:0 0 0 1px var(--anatomy-faint);border-radius:4px;padding:18px 18px 14px}
+.hoja-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hoja-h h3{font-size:17px;margin:0;flex:1;min-width:200px}
+.hoja-tag{font-family:var(--anatomy-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:3px;background:var(--anatomy-strong);color:var(--anatomy-page)}
+.enun{font-size:14.5px;margin:8px 0 14px}
+.hoja-g{display:grid;grid-template-columns:190px 1fr}
+.datos{border-right:2px solid var(--anatomy-strong);padding-right:14px;font-family:var(--anatomy-mono);font-size:13px}
+.datos h4{margin:0 0 4px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--anatomy-strong)}
+.datos ul{list-style:none;padding:0;margin:0 0 14px;line-height:1.75}
+.sol{list-style:none;margin:0;padding:0 0 0 16px;display:grid;gap:16px;min-width:0}
+.paso h5{font-size:14.5px;margin:0 0 6px;display:flex;gap:8px;align-items:center;color:var(--anatomy-strong)}
+.paso h5 span{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--anatomy-faint);font-size:11px;flex:none}
+.paso[data-now]{animation:stepin .35s var(--anatomy-ease)}
+.paso .calc{font-size:14px;gap:5px;overflow-wrap:anywhere}
+.paso .calc .ind{padding-left:22px}
+.paso .eq.big{font-size:19px;margin:2px 0}
+.un{color:var(--anatomy-muted);font-size:.9em}
+.rev{border:2px solid var(--c-f);border-radius:4px;padding:10px 12px}
+.rev h5 span{background:var(--c-f);color:#fff}
+.rev dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:13.5px}
+.rev dt{font-weight:700;color:var(--anatomy-strong)}.rev dd{margin:0}
+.hoja-nav{display:none;justify-content:center;align-items:center;gap:12px;margin-top:14px;font-family:var(--anatomy-mono);font-size:12.5px;color:var(--anatomy-muted)}
+.hoja[data-mode="steps"] .hoja-nav{display:flex}
+.minis,.axes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.minis figure,.axes figure{margin:0}
+.minis figcaption,.axes figcaption{font-size:12.5px;text-align:center;margin-top:2px}
+.mini{max-width:420px}
+.prof{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:6px}
+.prof li{display:flex;gap:10px;align-items:baseline;background:var(--anatomy-card);box-shadow:0 0 0 1px var(--anatomy-faint);padding:8px 12px;font-size:14px}
+.prof li span{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--anatomy-strong);color:var(--anatomy-page);font-size:12px;flex:none}
+.prefix{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.prefix>div{text-align:center;font-family:var(--anatomy-mono);font-size:13px;padding:8px;box-shadow:0 0 0 1px var(--anatomy-faint);background:var(--anatomy-card)}
+@media (max-width:640px){.hoja{padding:14px 12px}.hoja-g{grid-template-columns:1fr}.datos{border-right:0;border-bottom:2px solid var(--anatomy-strong);padding:0 0 10px;margin-bottom:12px}.sol{padding-left:0}.minis,.axes{grid-template-columns:1fr}.prefix{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:560px){#fig1 svg,#fig2 svg,#fig3 svg,#fig4 svg{width:114%;margin-left:-7%}.iso-plate{overflow:hidden}.rules{grid-template-columns:1fr}.rules.two,.cheat{grid-template-columns:1fr}.eq{font-size:17px}.eq.big{font-size:18px}.sliders label{grid-template-columns:26px 32px 1fr 52px}}
 @media (prefers-reduced-motion:reduce){.step{animation:none}.e-item{transition:none}}
 `;
@@ -763,13 +990,13 @@ const setSignBtn = (btn, s) => { btn.dataset.s = s; btn.textContent = s === "pos
   // signed force on Q1 along +x from charge j
   const fOn1 = (j) => { const d = X[j] - X[0]; const mag = KC * Q[0] * Q[j] / (d * d); const rep = signs[0] === signs[j]; return rep ? -mag : mag; };
   const arrowTxt = (v) => (v < 0 ? "←" : "→");
-  const fmt = (v) => sci(Math.abs(v), 3) + " N " + arrowTxt(v);
+  const fmt = (v) => +(Math.abs(v) * 1e3).toFixed(2) + " × 10⁻³ N " + arrowTxt(v);
   function say() {
     const f12 = fOn1(1), f13 = fOn1(2), F = f12 + f13;
     balls.forEach((b, i) => { b.dataset.q = signs[i]; setSignBtn(btns[i], signs[i]); });
     const how = Math.sign(f12) === Math.sign(f13) ? "se suman" : "se restan";
-    sumEl.innerHTML = '<div><span class="t-f">F₁₂ = 9×10⁹·4×10⁻⁶·2×10⁻⁶ / 2²</span><span>' + fmt(f12) + '</span></div><div><span style="color:var(--c-f13);font-weight:600">F₁₃ = 9×10⁹·4×10⁻⁶·1×10⁻⁶ / 4²</span><span>' + fmt(f13) + '</span></div><div class="tot"><span>F total (' + how + ')</span><span>' + fmt(F) + "</span></div>";
-    readout.textContent = "F = " + fmt(F);
+    sumEl.innerHTML = '<div><span class="t-f">F₁₂ = 9×10⁹·4×10⁻⁶·2×10⁻⁶ / 2²</span><span>' + fmt(f12) + '</span></div><div><span style="color:var(--c-f13);font-weight:600">F₁₃ = 9×10⁹·4×10⁻⁶·1×10⁻⁶ / 4²</span><span>' + fmt(f13) + '</span></div><div class="tot"><span>FR (' + how + ')</span><span>' + fmt(F) + "</span></div>";
+    readout.textContent = "FR = " + fmt(F);
   }
   function draw() {
     const x1 = D.X1, zc = D.ZC, r = D.R[0];
@@ -799,20 +1026,25 @@ const setSignBtn = (btn, s) => { btn.dataset.s = s; btn.textContent = s === "pos
   say(); draw(); kick();
 })();
 
-// ---------- Fig 5 ----------
-(() => {
-  const plate = document.querySelector(".stepper");
-  const steps = [...plate.querySelectorAll(".step")];
-  const nav = [...plate.querySelectorAll("[data-goto]")];
-  const read = plate.querySelector("[data-step-readout]");
-  const prev = plate.querySelector("[data-prev]"), next = plate.querySelector("[data-next]");
-  let at = 0;
-  const go = (i) => { at = Math.max(0, Math.min(steps.length - 1, i)); steps.forEach((s, j) => (s.hidden = j !== at)); nav.forEach((b, j) => b.toggleAttribute("aria-current", j === at)); nav[at].setAttribute("aria-current", "step"); read.textContent = "paso " + (at + 1) + " de " + steps.length; prev.disabled = at === 0; next.disabled = at === steps.length - 1; };
-  nav.forEach((b, i) => b.addEventListener("click", () => go(i)));
-  prev.addEventListener("click", () => go(at - 1));
-  next.addEventListener("click", () => go(at + 1));
-  go(0);
-})();
+
+// ---------- Hojas: todo / paso a paso ----------
+document.querySelectorAll(".hoja").forEach((h) => {
+  const pasos = [...h.querySelectorAll(".paso")];
+  const btn = h.querySelector("[data-mode-btn]"), at = h.querySelector("[data-at]");
+  const prev = h.querySelector("[data-prev]"), next = h.querySelector("[data-next]");
+  let i = 0;
+  const show = () => {
+    const steps = h.dataset.mode === "steps";
+    pasos.forEach((p, j) => { p.hidden = steps && j > i; p.toggleAttribute("data-now", steps && j === i); });
+    at.textContent = "paso " + (i + 2) + " de " + (pasos.length + 1);
+    prev.disabled = i === 0; next.disabled = i === pasos.length - 1;
+    btn.textContent = steps ? "Ver todo" : "Paso a paso";
+  };
+  btn.addEventListener("click", () => { h.dataset.mode = h.dataset.mode === "steps" ? "all" : "steps"; i = 0; show(); });
+  prev.addEventListener("click", () => { i = Math.max(0, i - 1); show(); });
+  next.addEventListener("click", () => { i = Math.min(pasos.length - 1, i + 1); show(); pasos[i].scrollIntoView({ block: "nearest", behavior: still.matches ? "auto" : "smooth" }); });
+  show();
+});
 `;
 
 const themeBoot = `<script>(function(){try{var t=new URLSearchParams(location.search).get("theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.body.dataset.theme=t;}catch(e){}})();</script>`;
