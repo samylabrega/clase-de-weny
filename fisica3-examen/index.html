@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Examen Física 3</title>
+<style>
+:root{
+  --bg:#f6f5f1;--card:#ffffff;--ink:#1d1d1f;--muted:#6b6b70;--line:#e2e1dc;
+  --hand:#2f5fd6;--hand-bg:#eef2fd;--calc:#138a52;--calc-bg:#eaf6ef;
+  --warn:#b45309;--warn-bg:#fff4e0;--ans:#c2264a;--key:#f1f1ee;--keyb:#c9c8c2;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111113;--card:#1a1a1d;--ink:#ececee;--muted:#9a9aa1;--line:#2c2c31;
+    --hand:#7ea2ff;--hand-bg:#1a2238;--calc:#52d491;--calc-bg:#14271d;
+    --warn:#f5b04a;--warn-bg:#2d2213;--ans:#ff7a95;--key:#26262b;--keyb:#3a3a41;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111113;--card:#1a1a1d;--ink:#ececee;--muted:#9a9aa1;--line:#2c2c31;
+  --hand:#7ea2ff;--hand-bg:#1a2238;--calc:#52d491;--calc-bg:#14271d;
+  --warn:#f5b04a;--warn-bg:#2d2213;--ans:#ff7a95;--key:#26262b;--keyb:#3a3a41;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+main{width:min(900px,100% - 24px);margin:20px auto 80px}
+h1{font-size:26px;margin:4px 0}
+h2{font-size:20px;margin:36px 0 10px;padding-top:6px;border-top:2px solid var(--ink)}
+h3{font-size:16px;margin:18px 0 8px}
+.sub{color:var(--muted);margin:0 0 12px}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+nav a{color:var(--ink);text-decoration:none;font-size:13px;padding:4px 10px;border:1px solid var(--line);border-radius:99px;background:var(--card)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:6px 8px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600;border-top:none}
+.f{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:14px}
+.big{font-size:17px;font-weight:700}
+.ans{color:var(--ans);font-weight:700}
+.warn{background:var(--warn-bg);border-left:4px solid var(--warn);border-radius:6px;padding:10px 12px;margin:10px 0;font-size:14px}
+.warn b{color:var(--warn)}
+kbd{display:inline-block;min-width:22px;text-align:center;font:600 13px ui-monospace,Menlo,monospace;padding:1px 6px;margin:1px 1px;border-radius:5px;background:var(--key);border:1px solid var(--keyb);border-bottom-width:2px;color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.chip b{display:block}
+/* Two columns */
+.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:12px 0;overflow:hidden}
+.ex .head{padding:12px 14px;border-bottom:1px solid var(--line)}
+.ex .head p{margin:4px 0;font-size:14px}
+.cols{display:grid;grid-template-columns:1fr 1fr}
+.colh{padding:6px 10px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.colh.h{background:var(--hand-bg);color:var(--hand)}
+.colh.c{background:var(--calc-bg);color:var(--calc)}
+.step{display:contents}
+.step>div{padding:8px 10px;border-top:1px solid var(--line);font-size:14px;overflow-wrap:anywhere}
+.step>div:first-child{border-right:1px solid var(--line)}
+.step .n{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:var(--hand);color:#fff;font-size:12px;font-weight:700;margin-right:6px}
+.step>div:last-child .n{background:var(--calc)}
+.step.res>div{background:color-mix(in srgb,var(--ans) 8%,transparent)}
+.tag{font-size:12px;color:var(--muted)}
+svg.fig{display:block;width:100%;max-width:340px;height:auto;margin:6px auto}
+svg text{font:600 13px system-ui,sans-serif;fill:var(--ink)}
+svg .l{stroke:var(--ink);stroke-width:1.5;fill:none}
+svg .p{fill:var(--ans)} svg .n2{fill:var(--hand)}
+svg .v1{stroke:var(--ans);stroke-width:2.5} svg .v2{stroke:var(--calc);stroke-width:2.5}
+@media (max-width:560px){body{font-size:14px}.step>div{padding:7px 7px;font-size:13px}.f{font-size:13px}kbd{font-size:12px;padding:1px 4px}}
+footer{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<main>
+<p class="sub">Física 3 · Examen 2 de noviembre · cuaderno abierto</p>
+<h1>Fuerza, Ley de Coulomb y Campo eléctrico</h1>
+<p class="sub">Ejercicios del profesor (pizarra), resueltos en dos columnas: <b style="color:var(--hand)">✍️ a mano</b> | <b style="color:var(--calc)">📱 en la calculadora del celular</b>.</p>
+<nav>
+  <a href="#variables">0 Variables</a><a href="#formulas">1 Fórmulas</a><a href="#calc">2 Calculadora</a>
+  <a href="#ej1">Ej 1 Fuerza resultante</a><a href="#ej2">Ej 2 Coulomb en línea</a><a href="#ej3">Ej 3 Coulomb triángulo</a>
+  <a href="#ej4">Ej 4 Campo en línea</a><a href="#ej5">Ej 5 Campo triángulo</a><a href="#ej6">Ej 6 Despejar d</a><a href="#ej7">Ej 7 Cargas iguales</a>
+  <a href="#metodo">Método</a>
+</nav>
+
+<h2 id="variables">0 · Variables que vamos a usar</h2>
+<div class="card">
+<table>
+<tr><th>Símbolo</th><th>Qué es</th><th>Unidad</th></tr>
+<tr><td class="f big">F</td><td>Fuerza (eléctrica)</td><td class="f">N (newton)</td></tr>
+<tr><td class="f big">F<sub>R</sub></td><td>Fuerza resultante (la suma de todas)</td><td class="f">N</td></tr>
+<tr><td class="f big">F<sub>12</sub></td><td>Fuerza que la carga 2 hace sobre la carga 1</td><td class="f">N</td></tr>
+<tr><td class="f big">q, Q</td><td>Carga eléctrica (puede ser + o −)</td><td class="f">C (coulomb)</td></tr>
+<tr><td class="f big">d, L</td><td>Distancia entre cargas (L = lado del triángulo)</td><td class="f">m (metros)</td></tr>
+<tr><td class="f big">k</td><td>Constante de Coulomb = <b>9×10⁹</b></td><td class="f">N·m²/C²</td></tr>
+<tr><td class="f big">E</td><td>Campo eléctrico en un punto P</td><td class="f">N/C</td></tr>
+<tr><td class="f big">F<sub>x</sub>, F<sub>y</sub></td><td>Componentes (pedazo horizontal y vertical)</td><td class="f">N</td></tr>
+<tr><td class="f big">ΣF<sub>x</sub>, ΣF<sub>y</sub></td><td>Suma de todas las x / suma de todas las y</td><td class="f">N</td></tr>
+<tr><td class="f big">θ, β, γ</td><td>Ángulos (θ se mide desde el eje +x, contra el reloj)</td><td class="f">grados °</td></tr>
+</table>
+</div>
+<div class="grid">
+  <div class="chip"><b>mili (m)</b><span class="f">×10⁻³</span></div>
+  <div class="chip"><b>micro (µ)</b><span class="f">×10⁻⁶</span></div>
+  <div class="chip"><b>nano (n)</b><span class="f">×10⁻⁹</span></div>
+  <div class="chip"><b>pico (p)</b><span class="f">×10⁻¹²</span></div>
+  <div class="chip"><b>cm → m</b><span class="f">÷ 100 (200 cm = 2 m)</span></div>
+</div>
+
+<h2 id="formulas">1 · Fórmulas (lo que va en el cuaderno)</h2>
+<div class="grid">
+  <div class="chip"><b>Ley de Coulomb</b><span class="f big">F = k·|q₁|·|q₂| / d²</span></div>
+  <div class="chip"><b>Campo eléctrico</b><span class="f big">E = k·Q / d²</span><br><span class="f">también E = F / q</span></div>
+  <div class="chip"><b>Componentes</b><span class="f">Fx = F·cos θ<br>Fy = F·sen θ</span></div>
+  <div class="chip"><b>Resultante</b><span class="f">F<sub>R</sub> = √( (ΣFx)² + (ΣFy)² )</span></div>
+  <div class="chip"><b>Ángulo</b><span class="f">β = tan⁻¹( |ΣFy| / |ΣFx| )</span><br><span class="tag">luego θ según el cuadrante</span></div>
+  <div class="chip"><b>Despejes</b><span class="f">d = √( k·q₁·q₂ / F )<br>q₂ = F·d² / (k·q₁)<br>q₁·q₂ = F·d² / k</span></div>
+</div>
+<div class="card">
+<b>Dirección de las flechas (lo más importante)</b>
+<table>
+<tr><td>Mismo signo (+ +) o (− −)</td><td><b>se repelen</b>: la flecha <b>se aleja</b> de la otra carga</td></tr>
+<tr><td>Signos distintos (+ −)</td><td><b>se atraen</b>: la flecha <b>va hacia</b> la otra carga</td></tr>
+<tr><td>Campo E de una carga <b>+</b></td><td>la flecha <b>sale</b> de la carga (se aleja)</td></tr>
+<tr><td>Campo E de una carga <b>−</b></td><td>la flecha <b>entra</b> a la carga (va hacia ella)</td></tr>
+</table>
+<p class="tag">En la fórmula las cargas van <b>sin signo</b> (|q|). El signo solo decide hacia dónde apunta la flecha.</p>
+</div>
+<div class="card">
+<b>Ángulo θ desde +x (contra el reloj)</b>
+<table>
+<tr><td>Cuadrante I (x+, y+)</td><td class="f">θ = β</td></tr>
+<tr><td>Cuadrante II (x−, y+)</td><td class="f">θ = 180° − β</td></tr>
+<tr><td>Cuadrante III (x−, y−)</td><td class="f">θ = 180° + β</td></tr>
+<tr><td>Cuadrante IV (x+, y−)</td><td class="f">θ = 360° − β</td></tr>
+</table>
+</div>
+
+<h2 id="calc">2 · Preparar la calculadora del celular</h2>
+<div class="card">
+<p><b>1.</b> Gira el celular en horizontal: aparece la calculadora científica (con <kbd>sin</kbd> <kbd>cos</kbd> <kbd>tan</kbd> <kbd>x²</kbd> <kbd>√x</kbd>).</p>
+<p><b>2. Modo GRADOS:</b> escribe <kbd>60</kbd> <kbd>cos</kbd> (o <kbd>cos</kbd> <kbd>60</kbd> <kbd>=</kbd>). Si sale <b>0.5</b> estás bien. Si sale <b>−0.95</b> estás en radianes: toca <kbd>Rad</kbd>/<kbd>Deg</kbd> (iPhone) o <kbd>DEG</kbd>/<kbd>RAD</kbd> (Android).</p>
+<p><b>3. Funciones inversas</b> (sen⁻¹, tan⁻¹): iPhone <kbd>2nd</kbd> y luego <kbd>tan⁻¹</kbd>; Android <kbd>INV</kbd> o <kbd>2nd</kbd> y luego <kbd>tan⁻¹</kbd>.</p>
+<p><b>4. Truco de los exponentes:</b> en la calculadora metes <b>solo los números</b> (9 × 2 × 4…). Las potencias de 10 las sumas <b>a mano</b>, como el profe: <span class="f">10⁹·10⁻⁶·10⁻⁶ = 10⁹⁻⁶⁻⁶ = 10⁻³</span>. Así no te equivocas con la tecla EE.</p>
+<p class="tag">En iPhone la tecla <kbd>sin</kbd>/<kbd>cos</kbd> se aplica al número que ya está en pantalla: escribe primero el ángulo y luego la tecla.</p>
+</div>
+
+<!-- ===================== EJ 1 ===================== -->
+<h2 id="ej1">Ej 1 · Fuerza resultante con componentes</h2>
+<div class="ex">
+<div class="head">
+<p><b>Pizarra:</b> F<sub>x</sub> = −10 N, F<sub>y</sub> = 14 N. Hallar F<sub>R</sub> y su ángulo θ.</p>
+<svg class="fig" viewBox="0 0 300 170" aria-label="Vector en el segundo cuadrante: 10 a la izquierda y 14 hacia arriba">
+<line x1="20" y1="140" x2="280" y2="140" class="l"/><line x1="200" y1="10" x2="200" y2="165" class="l"/>
+<line x1="200" y1="140" x2="110" y2="30" class="v1"/><polygon points="110,30 124,38 116,45" class="p"/>
+<line x1="110" y1="30" x2="110" y2="140" stroke="currentColor" stroke-dasharray="4 4" style="stroke:var(--muted)"/>
+<text x="140" y="160">Fx = −10</text><text x="56" y="90">Fy = 14</text><text x="160" y="72" style="fill:var(--ans)">F<tspan dy="4" font-size="10">R</tspan></text>
+<text x="170" y="134">γ</text><text x="226" y="120">θ</text><path d="M220 140 A20 20 0 0 0 188 125" class="l"/>
+</svg>
+</div>
+<div class="cols">
+<div class="colh h">✍️ A mano</div><div class="colh c">📱 Calculadora</div>
+<div class="step"><div><span class="n">1</span><b>Fórmula</b><br><span class="f">F<sub>R</sub> = √(Fx² + Fy²)</span></div><div><span class="n">1</span>—</div></div>
+<div class="step"><div><span class="n">2</span><b>Sustituir</b><br><span class="f">F<sub>R</sub> = √((−10)² + (14)²)</span></div><div><span class="n">2</span><kbd>10</kbd><kbd>x²</kbd> → <b>100</b><br><kbd>14</kbd><kbd>x²</kbd> → <b>196</b><br><span class="tag">(un negativo al cuadrado da positivo)</span></div></div>
+<div class="step"><div><span class="n">3</span><b>Sumar</b><br><span class="f">F<sub>R</sub> = √296</span></div><div><span class="n">3</span><kbd>100</kbd><kbd>+</kbd><kbd>196</kbd><kbd>=</kbd> → <b>296</b><br><kbd>√x</kbd> → <b>17.2046</b></div></div>
+<div class="step res"><div><span class="n">4</span><span class="ans">F<sub>R</sub> = 17.20 N</span></div><div><span class="n">4</span>Redondea a 2 decimales</div></div>
+<div class="step"><div><span class="n">5</span><b>Ángulo con el eje x (γ)</b><br><span class="f">tan γ = 14 / 10 = 1.4</span><br><span class="f">γ = tan⁻¹(1.4)</span></div><div><span class="n">5</span><kbd>14</kbd><kbd>÷</kbd><kbd>10</kbd><kbd>=</kbd> → <b>1.4</b><br><kbd>2nd</kbd><kbd>tan⁻¹</kbd> → <b>54.46</b></div></div>
+<div class="step"><div><span class="n">6</span><b>Cuadrante II</b> (x−, y+)<br><span class="f">θ = 180° − γ = 180 − 54.46</span></div><div><span class="n">6</span><kbd>180</kbd><kbd>−</kbd><kbd>54.46</kbd><kbd>=</kbd> → <b>125.54</b></div></div>
+<div class="step res"><div><span class="n">7</span><span class="ans">θ = 125.54°</span></div><div><span class="n">7</span><span class="tag">El profe redondeó γ ≈ 55° → θ ≈ 125°. Con sen⁻¹(14/17.2) y cos⁻¹(10/17.2) sale el mismo γ.</span></div></div>
+</div>
+</div>
+
+<!-- ===================== EJ 2 ===================== -->
+<h2 id="ej2">Ej 2 · Coulomb: 3 cargas en línea</h2>
+<div class="ex">
+<div class="head">
+<p><b>Pizarra:</b> q₁ = 4×10⁻⁶ C, q₂ = 2×10⁻⁶ C, q₃ = 1×10⁻⁶ C (todas +). q₁ —2 m— q₂ —2 m— q₃. <b>Hallar F<sub>R</sub> sobre q₁.</b></p>
+<svg class="fig" viewBox="0 0 320 80" aria-label="Tres cargas positivas en línea separadas 2 metros">
+<line x1="40" y1="40" x2="290" y2="40" class="l" style="stroke:var(--muted)"/>
+<circle cx="60" cy="40" r="13" class="p"/><circle cx="160" cy="40" r="13" class="p"/><circle cx="270" cy="40" r="13" class="p"/>
+<text x="55" y="45" style="fill:#fff">+</text><text x="155" y="45" style="fill:#fff">+</text><text x="265" y="45" style="fill:#fff">+</text>
+<text x="52" y="72">q₁</text><text x="152" y="72">q₂</text><text x="262" y="72">q₃</text>
+<text x="96" y="30">2 m</text><text x="204" y="30">2 m</text>
+</svg>
+</div>
+<div class="cols">
+<div class="colh h">✍️ A mano</div><div class="colh c">📱 Calculadora</div>
+<div class="step"><div><span class="n">1</span><b>F₁₂</b> (q₂ sobre q₁, d = 2 m)<br><span class="f">F₁₂ = 9×10⁹ · 2×10⁻⁶ · 4×10⁻⁶ / (2)²</span></div><div><span class="n">1</span>Solo números:<br><kbd>9</kbd><kbd>×</kbd><kbd>2</kbd><kbd>×</kbd><kbd>4</kbd><kbd>=</kbd> → <b>72</b></div></div>
+<div class="step"><div><span class="n">2</span><b>Exponentes a mano</b><br><span class="f">10⁹⁻⁶⁻⁶ = 10⁻³</span><br><span class="f">F₁₂ = 72×10⁻³ / 4</span></div><div><span class="n">2</span><kbd>2</kbd><kbd>x²</kbd> → <b>4</b><br><kbd>72</kbd><kbd>÷</kbd><kbd>4</kbd><kbd>=</kbd> → <b>18</b></div></div>
+<div class="step res"><div><span class="n">3</span><span class="ans">F₁₂ = 18×10⁻³ N</span></div><div><span class="n">3</span>(= 0.018 N)</div></div>
+<div class="step"><div><span class="n">4</span><b>F₁₃</b> (q₃ sobre q₁, d = 4 m)<br><span class="f">F₁₃ = 9×10⁹ · 4×10⁻⁶ · 1×10⁻⁶ / (4)²</span><br><span class="f">10⁹⁻⁶⁻⁶ = 10⁻³</span></div><div><span class="n">4</span><kbd>9</kbd><kbd>×</kbd><kbd>4</kbd><kbd>×</kbd><kbd>1</kbd><kbd>=</kbd> → <b>36</b><br><kbd>4</kbd><kbd>x²</kbd> → <b>16</b><br><kbd>36</kbd><kbd>÷</kbd><kbd>16</kbd><kbd>=</kbd> → <b>2.25</b></div></div>
+<div class="step res"><div><span class="n">5</span><span class="ans">F₁₃ = 2.25×10⁻³ N</span></div><div><span class="n">5</span>(= 0.00225 N)</div></div>
+<div class="step"><div><span class="n">6</span><b>DCL en eje x</b> (como el profe): F₁₂ ← , F₁₃ →<br><span class="f">F<sub>R</sub> = F₁₃ − F₁₂ = 2.25×10⁻³ − 18×10⁻³</span><br><span class="f">= 10⁻³ (2.25 − 18)</span></div><div><span class="n">6</span>Los dos tienen 10⁻³, resta solo los números:<br><kbd>2.25</kbd><kbd>−</kbd><kbd>18</kbd><kbd>=</kbd> → <b>−15.75</b></div></div>
+<div class="step res"><div><span class="n">7</span><span class="ans">F<sub>R</sub> = 15.75×10⁻³ N</span> (pizarra)</div><div><span class="n">7</span>El signo − indica que apunta a la izquierda</div></div>
+</div>
+</div>
+<div class="warn"><b>⚠ Ojo:</b> si las tres cargas son <b>+</b>, q₂ y q₃ <b>empujan a q₁ hacia la izquierda</b> (las dos se repelen) y las fuerzas se <b>suman</b>: F<sub>R</sub> = 18×10⁻³ + 2.25×10⁻³ = <b>20.25×10⁻³ N</b> ←. Si en el examen sale uno así, dibuja cada flecha con la regla de repeler/atraer: si apuntan al mismo lado se <b>suman</b> y si apuntan a lados opuestos se <b>restan</b>.</div>
+
+<!-- ===================== EJ 3 ===================== -->
+<h2 id="ej3">Ej 3 · Coulomb: triángulo equilátero</h2>
+<div class="ex">
+<div class="head">
+<p><b>Pizarra:</b> q₁ = +7×10⁻⁶ C (arriba), q₃ = +2×10⁻⁶ C (abajo izq.), q₂ = −4×10⁻⁶ C (abajo der.), L = 0.5 m, ángulos de 60°. <b>Hallar F<sub>R</sub> sobre q₁ y el ángulo con x.</b></p>
+<svg class="fig" viewBox="0 0 300 200" aria-label="Triángulo equilátero con q1 arriba, q3 abajo a la izquierda y q2 abajo a la derecha">
+<polygon points="150,60 70,180 230,180" class="l"/>
+<circle cx="150" cy="60" r="12" class="p"/><text x="145" y="65" style="fill:#fff">+</text><text x="168" y="58">q₁</text>
+<circle cx="70" cy="180" r="12" class="p"/><text x="65" y="185" style="fill:#fff">+</text><text x="40" y="196">q₃</text>
+<circle cx="230" cy="180" r="12" class="n2"/><text x="226" y="185" style="fill:#fff">−</text><text x="248" y="196">q₂</text>
+<line x1="150" y1="60" x2="190" y2="0" class="v1"/><text x="196" y="16" style="fill:var(--ans)">F₁₃</text>
+<line x1="150" y1="60" x2="190" y2="120" class="v2"/><text x="196" y="122" style="fill:var(--calc)">F₁₂</text>
+<text x="88" y="172">60°</text><text x="140" y="196">0.5 m</text>
+</svg>
+</div>
+<div class="cols">
+<div class="colh h">✍️ A mano</div><div class="colh c">📱 Calculadora</div>
+<div class="step"><div><span class="n">1</span><b>F₁₃</b><br><span class="f">= 9×10⁹ · 7×10⁻⁶ · 2×10⁻⁶ / (0.5)²</span><br><span class="f">= 126×10⁻³ / 0.25</span></div><div><span class="n">1</span><kbd>9</kbd><kbd>×</kbd><kbd>7</kbd><kbd>×</kbd><kbd>2</kbd><kbd>=</kbd> → <b>126</b><br><kbd>0.5</kbd><kbd>x²</kbd> → <b>0.25</b><br><kbd>126</kbd><kbd>÷</kbd><kbd>0.25</kbd><kbd>=</kbd> → <b>504</b></div></div>
+<div class="step res"><div><span class="n">2</span><span class="ans">F₁₃ = 504×10⁻³ N = 0.504 N</span></div><div><span class="n">2</span><span class="tag">En la pizarra quedó "0.54" (se comió el 0): es 0.504.</span></div></div>
+<div class="step"><div><span class="n">3</span><b>F₁₂</b><br><span class="f">= 9×10⁹ · 7×10⁻⁶ · 4×10⁻⁶ / (0.5)²</span><br><span class="f">= 252×10⁻³ / 0.25</span></div><div><span class="n">3</span><kbd>9</kbd><kbd>×</kbd><kbd>7</kbd><kbd>×</kbd><kbd>4</kbd><kbd>=</kbd> → <b>252</b><br><kbd>252</kbd><kbd>÷</kbd><kbd>0.25</kbd><kbd>=</kbd> → <b>1008</b></div></div>
+<div class="step res"><div><span class="n">4</span><span class="ans">F₁₂ = 1008×10⁻³ N ≈ 1 N</span></div><div><span class="n">4</span>1008×10⁻³ = 1.008</div></div>
+<div class="step"><div><span class="n">5</span><b>Componentes x</b> (ángulo 60°)<br><span class="f">F₁₃x = 0.504·cos60 = 0.252</span><br><span class="f">F₁₂x = 1.008·cos60 = 0.504</span><br><span class="f">ΣFx = 0.756 N</span></div><div><span class="n">5</span><kbd>60</kbd><kbd>cos</kbd> → <b>0.5</b><br><kbd>0.504</kbd><kbd>×</kbd><kbd>0.5</kbd><kbd>=</kbd> → 0.252<br><kbd>1.008</kbd><kbd>×</kbd><kbd>0.5</kbd><kbd>=</kbd> → 0.504<br><kbd>0.252</kbd><kbd>+</kbd><kbd>0.504</kbd> → <b>0.756</b></div></div>
+<div class="step"><div><span class="n">6</span><b>Componentes y</b> (como en la pizarra, las dos +)<br><span class="f">F₁₃y = 0.504·sen60 = 0.436</span><br><span class="f">F₁₂y = 1.008·sen60 = 0.873</span><br><span class="f">ΣFy = 1.309 N</span></div><div><span class="n">6</span><kbd>60</kbd><kbd>sin</kbd> → <b>0.866</b><br><kbd>0.504</kbd><kbd>×</kbd><kbd>0.866</kbd> → 0.436<br><kbd>1.008</kbd><kbd>×</kbd><kbd>0.866</kbd> → 0.873<br>suma → <b>1.309</b></div></div>
+<div class="step"><div><span class="n">7</span><b>Resultante</b><br><span class="f">F<sub>R</sub> = √(0.756² + 1.309²)</span></div><div><span class="n">7</span><kbd>0.756</kbd><kbd>x²</kbd><kbd>+</kbd><kbd>1.309</kbd><kbd>x²</kbd><kbd>=</kbd> → 2.2850<br><kbd>√x</kbd> → <b>1.512</b></div></div>
+<div class="step res"><div><span class="n">8</span><span class="ans">F<sub>R</sub> ≈ 1.51 N</span> <span class="tag">(pizarra: 1.53 N, por usar 0.54)</span></div><div><span class="n">8</span></div></div>
+<div class="step"><div><span class="n">9</span><b>Ángulo</b><br><span class="f">β = tan⁻¹(1.309 / 0.756)</span></div><div><span class="n">9</span><kbd>1.309</kbd><kbd>÷</kbd><kbd>0.756</kbd><kbd>=</kbd> → 1.7315<br><kbd>2nd</kbd><kbd>tan⁻¹</kbd> → <b>60.0</b></div></div>
+<div class="step res"><div><span class="n">10</span><span class="ans">β ≈ 60°</span> <span class="tag">(pizarra: 59.31°, con sen⁻¹ y números redondeados)</span></div><div><span class="n">10</span></div></div>
+</div>
+</div>
+<div class="warn"><b>⚠ Ojo con el signo de F₁₂y:</b> q₂ es <b>negativa</b>, así que <b>atrae</b> a q₁ hacia abajo a la derecha: su componente y debería ser <b>−0.873</b>. Con ese signo: ΣFy = 0.436 − 0.873 = −0.437, F<sub>R</sub> = √(0.756² + 0.437²) = <b>0.873 N</b> y el ángulo es <b>−30°</b> (330°). Regla: <b>la componente lleva el signo de hacia dónde apunta la flecha</b> (abajo = −, izquierda = −).</div>
+
+<!-- ===================== EJ 4 ===================== -->
+<h2 id="ej4">Ej 4 · Campo eléctrico: 2 cargas en línea</h2>
+<div class="ex">
+<div class="head">
+<p><b>Pizarra:</b> q₁ = +10×10⁻⁶ C a 2 m de P, q₂ = +8×10⁻⁶ C a 3 m de P (P está entre las dos). <b>Hallar E<sub>R</sub> en P.</b></p>
+<svg class="fig" viewBox="0 0 320 80" aria-label="Punto P entre dos cargas positivas">
+<line x1="30" y1="40" x2="300" y2="40" class="l" style="stroke:var(--muted)"/>
+<circle cx="40" cy="40" r="13" class="p"/><text x="35" y="45" style="fill:#fff">+</text><text x="32" y="74">q₁</text>
+<circle cx="140" cy="40" r="4" style="fill:var(--ink)"/><text x="134" y="74">P</text>
+<circle cx="290" cy="40" r="13" class="p"/><text x="285" y="45" style="fill:#fff">+</text><text x="282" y="74">q₂</text>
+<line x1="140" y1="22" x2="190" y2="22" class="v1"/><polygon points="196,22 186,17 186,27" class="p"/><text x="168" y="14" style="fill:var(--ans)">E₁</text>
+<line x1="140" y1="22" x2="110" y2="22" class="v2"/><polygon points="104,22 114,17 114,27" style="fill:var(--calc)"/><text x="100" y="14" style="fill:var(--calc)">E₂</text>
+<text x="80" y="58">2 m</text><text x="205" y="58">3 m</text>
+</svg>
+</div>
+<div class="cols">
+<div class="colh h">✍️ A mano</div><div class="colh c">📱 Calculadora</div>
+<div class="step"><div><span class="n">1</span><b>E₁</b> (d = 2 m)<br><span class="f">E₁ = 9×10⁹ · 10×10⁻⁶ / (2)²</span><br><span class="f">10⁹⁻⁶ = 10³</span></div><div><span class="n">1</span><kbd>9</kbd><kbd>×</kbd><kbd>10</kbd><kbd>=</kbd> → <b>90</b><br><kbd>90</kbd><kbd>÷</kbd><kbd>4</kbd><kbd>=</kbd> → <b>22.5</b></div></div>
+<div class="step res"><div><span class="n">2</span><span class="ans">E₁ = 22.50×10³ N/C</span> → (sale de q₁, que es +)</div><div><span class="n">2</span></div></div>
+<div class="step"><div><span class="n">3</span><b>E₂</b> (d = 3 m)<br><span class="f">E₂ = 9×10⁹ · 8×10⁻⁶ / (3)²</span><br><span class="f">10⁹⁻⁶ = 10³</span></div><div><span class="n">3</span><kbd>9</kbd><kbd>×</kbd><kbd>8</kbd><kbd>=</kbd> → <b>72</b><br><kbd>3</kbd><kbd>x²</kbd> → 9<br><kbd>72</kbd><kbd>÷</kbd><kbd>9</kbd><kbd>=</kbd> → <b>8</b></div></div>
+<div class="step res"><div><span class="n">4</span><span class="ans">E₂ = 8×10³ N/C</span> ← (sale de q₂, que es +)</div><div><span class="n">4</span></div></div>
+<div class="step"><div><span class="n">5</span><b>Sentidos opuestos → se restan</b><br><span class="f">E<sub>R</sub> = E₁ − E₂ = (22.50 − 8)×10³</span></div><div><span class="n">5</span><kbd>22.5</kbd><kbd>−</kbd><kbd>8</kbd><kbd>=</kbd> → <b>14.5</b></div></div>
+<div class="step res"><div><span class="n">6</span><span class="ans">E<sub>R</sub> = 14.50×10³ N/C</span> → (hacia la derecha)</div><div><span class="n">6</span>(= 14 500 N/C)</div></div>
+</div>
+</div>
+
+<!-- ===================== EJ 5 ===================== -->
+<h2 id="ej5">Ej 5 · Campo eléctrico: triángulo (punto P arriba)</h2>
+<div class="ex">
+<div class="head">
+<p><b>Pizarra:</b> q₁ = −8×10⁻⁹ C (abajo izq.), q₂ = +6×10⁻⁹ C (abajo der.), L = 0.2 m. P es el vértice de arriba. <b>Hallar E<sub>R</sub> y θ.</b></p>
+<svg class="fig" viewBox="0 0 300 200" aria-label="Triángulo con P arriba, q1 negativa abajo a la izquierda y q2 positiva abajo a la derecha">
+<polygon points="150,70 80,180 220,180" class="l"/>
+<circle cx="150" cy="70" r="4" style="fill:var(--ink)"/><text x="160" y="74">P</text>
+<circle cx="80" cy="180" r="12" class="n2"/><text x="76" y="185" style="fill:#fff">−</text><text x="50" y="196">q₁</text>
+<circle cx="220" cy="180" r="12" class="p"/><text x="215" y="185" style="fill:#fff">+</text><text x="238" y="196">q₂</text>
+<line x1="150" y1="70" x2="115" y2="125" class="v1"/><text x="84" y="118" style="fill:var(--ans)">E₁</text>
+<line x1="150" y1="70" x2="115" y2="15" class="v2"/><text x="88" y="24" style="fill:var(--calc)">E₂</text>
+<text x="136" y="196">0.2 m</text>
+</svg>
+<p class="tag">E₁ va <b>hacia</b> q₁ (es −): abajo-izquierda → θ = 240°. E₂ <b>sale</b> de q₂ (es +): arriba-izquierda → θ = 120°.</p>
+</div>
+<div class="cols">
+<div class="colh h">✍️ A mano</div><div class="colh c">📱 Calculadora</div>
+<div class="step"><div><span class="n">1</span><b>E₁</b><br><span class="f">= 9×10⁹ · 8×10⁻⁹ / (0.2)²</span><br><span class="f">10⁹⁻⁹ = 10⁰ = 1</span></div><div><span class="n">1</span><kbd>9</kbd><kbd>×</kbd><kbd>8</kbd> → 72<br><kbd>0.2</kbd><kbd>x²</kbd> → 0.04<br><kbd>72</kbd><kbd>÷</kbd><kbd>0.04</kbd> → <b>1800</b></div></div>
+<div class="step"><div><span class="n">2</span><b>E₂</b><br><span class="f">= 9×10⁹ · 6×10⁻⁹ / (0.2)²</span></div><div><span class="n">2</span><kbd>9</kbd><kbd>×</kbd><kbd>6</kbd> → 54<br><kbd>54</kbd><kbd>÷</kbd><kbd>0.04</kbd> → <b>1350</b></div></div>
+<div class="step res"><div><span class="n">3</span><span class="ans">E₁ = 1800 N/C · E₂ = 1350 N/C</span></div><div><span class="n">3</span></div></div>
+<div class="step"><div><span class="n">4</span><b>Componentes x</b><br><span class="f">E₁x = 1800·cos240 = −900</span><br><span class="f">E₂x = 1350·cos120 = −675</span></div><div><span class="n">4</span><kbd>240</kbd><kbd>cos</kbd> → −0.5 ; <kbd>×</kbd><kbd>1800</kbd> → <b>−900</b><br><kbd>120</kbd><kbd>cos</kbd> → −0.5 ; <kbd>×</kbd><kbd>1350</kbd> → <b>−675</b></div></div>
+<div class="step"><div><span class="n">5</span><b>Componentes y</b><br><span class="f">E₁y = 1800·sen240 = −1558.85</span><br><span class="f">E₂y = 1350·sen120 = 1169.13</span></div><div><span class="n">5</span><kbd>240</kbd><kbd>sin</kbd><kbd>×</kbd><kbd>1800</kbd> → <b>−1558.85</b><br><kbd>120</kbd><kbd>sin</kbd><kbd>×</kbd><kbd>1350</kbd> → <b>1169.13</b></div></div>
+<div class="step"><div><span class="n">6</span><b>Sumas</b><br><span class="f">ΣEx = −900 − 675 = −1575 N/C</span><br><span class="f">ΣEy = −1558.85 + 1169.13 = −389.71 N/C</span></div><div><span class="n">6</span><kbd>900</kbd><kbd>+/-</kbd><kbd>−</kbd><kbd>675</kbd> → <b>−1575</b><br><kbd>1558.85</kbd><kbd>+/-</kbd><kbd>+</kbd><kbd>1169.13</kbd> → <b>−389.72</b></div></div>
+<div class="step"><div><span class="n">7</span><b>Resultante</b><br><span class="f">E<sub>R</sub> = √((−1575)² + (−389.71)²)</span></div><div><span class="n">7</span><kbd>1575</kbd><kbd>x²</kbd><kbd>+</kbd><kbd>389.71</kbd><kbd>x²</kbd><kbd>=</kbd> → 2 632 499<br><kbd>√x</kbd> → <b>1622.50</b></div></div>
+<div class="step res"><div><span class="n">8</span><span class="ans">E<sub>R</sub> ≈ 1622.50 N/C</span> <span class="tag">(pizarra: 1622.32)</span></div><div><span class="n">8</span><span class="tag">Los cuadrados no llevan signo: mete los números en positivo</span></div></div>
+<div class="step"><div><span class="n">9</span><b>Ángulo β</b><br><span class="f">β = tan⁻¹(389.71 / 1575)</span></div><div><span class="n">9</span><kbd>389.71</kbd><kbd>÷</kbd><kbd>1575</kbd> → 0.2474<br><kbd>2nd</kbd><kbd>tan⁻¹</kbd> → <b>13.90</b></div></div>
+<div class="step"><div><span class="n">10</span><b>Cuadrante III</b> (x−, y−)<br><span class="f">θ = 180° + β = 180 + 13.90</span></div><div><span class="n">10</span><kbd>180</kbd><kbd>+</kbd><kbd>13.90</kbd> → <b>193.90</b></div></div>
+<div class="step res"><div><span class="n">11</span><span class="ans">θ ≈ 193.90°</span> <span class="tag">(pizarra: 193.87° con 389)</span></div><div><span class="n">11</span></div></div>
+</div>
+</div>
+
+<!-- ===================== EJ 6 ===================== -->
+<h2 id="ej6">Ej 6 · Despejar la distancia (práctica del cuaderno)</h2>
+<div class="ex">
+<div class="head"><p>q₁ = 4×10⁻⁶ C, q₂ = 2×10⁻⁶ C, F = 0.2 N. <b>Hallar d.</b></p></div>
+<div class="cols">
+<div class="colh h">✍️ A mano</div><div class="colh c">📱 Calculadora</div>
+<div class="step"><div><span class="n">1</span><b>Despeje</b><br><span class="f">F = k·q₁·q₂/d² → d² = k·q₁·q₂/F</span><br><span class="f">d = √(k·q₁·q₂ / F)</span></div><div><span class="n">1</span>—</div></div>
+<div class="step"><div><span class="n">2</span><b>Numerador</b><br><span class="f">9×10⁹ · 4×10⁻⁶ · 2×10⁻⁶ = 72×10⁻³</span><br><span class="f">= 0.072</span></div><div><span class="n">2</span><kbd>9</kbd><kbd>×</kbd><kbd>4</kbd><kbd>×</kbd><kbd>2</kbd> → 72<br>10⁻³ → mueve la coma 3 lugares: <b>0.072</b></div></div>
+<div class="step"><div><span class="n">3</span><span class="f">d = √(0.072 / 0.2) = √0.36</span></div><div><span class="n">3</span><kbd>0.072</kbd><kbd>÷</kbd><kbd>0.2</kbd><kbd>=</kbd> → 0.36<br><kbd>√x</kbd> → <b>0.6</b></div></div>
+<div class="step res"><div><span class="n">4</span><span class="ans">d = 0.6 m</span></div><div><span class="n">4</span></div></div>
+</div>
+</div>
+
+<!-- ===================== EJ 7 ===================== -->
+<h2 id="ej7">Ej 7 · Primer parcial: dos cargas iguales</h2>
+<div class="ex">
+<div class="head"><p>Dos cargas iguales separadas 200 cm, F = 9.5×10⁻¹⁴ N. <b>Hallar el valor de las cargas.</b></p></div>
+<div class="cols">
+<div class="colh h">✍️ A mano</div><div class="colh c">📱 Calculadora</div>
+<div class="step"><div><span class="n">1</span><b>Datos</b><br><span class="f">d = 200 cm ÷ 100 = 2 m</span><br><span class="f">k = 9×10⁹ · F = 9.5×10⁻¹⁴ N</span></div><div><span class="n">1</span><kbd>200</kbd><kbd>÷</kbd><kbd>100</kbd> → <b>2</b></div></div>
+<div class="step"><div><span class="n">2</span><b>Despeje</b> (q₁ = q₂ = q)<br><span class="f">q·q = q² = F·d² / k</span></div><div><span class="n">2</span>—</div></div>
+<div class="step"><div><span class="n">3</span><span class="f">q² = 9.5×10⁻¹⁴ · 4 / 9×10⁹</span><br><span class="f">= (38 / 9) × 10⁻¹⁴⁻⁹ = 4.22×10⁻²³</span></div><div><span class="n">3</span><kbd>9.5</kbd><kbd>×</kbd><kbd>4</kbd> → 38<br><kbd>38</kbd><kbd>÷</kbd><kbd>9</kbd> → <b>4.222</b></div></div>
+<div class="step"><div><span class="n">4</span><b>Raíz</b>: el exponente debe ser <b>par</b><br><span class="f">4.22×10⁻²³ = 42.2×10⁻²⁴</span><br><span class="f">q = √42.2 × 10⁻¹²</span></div><div><span class="n">4</span><kbd>42.22</kbd><kbd>√x</kbd> → <b>6.498</b><br><span class="tag">(raíz de 10⁻²⁴ = 10⁻¹²: divide el exponente entre 2)</span></div></div>
+<div class="step res"><div><span class="n">5</span><span class="ans">q ≈ 6.5×10⁻¹² C</span> (cada carga)</div><div><span class="n">5</span></div></div>
+</div>
+</div>
+
+<h2 id="metodo">Método para cualquier problema</h2>
+<div class="card">
+<table>
+<tr><td class="f big">1</td><td><b>Datos</b>: anota cada q (con su signo), d en metros, k = 9×10⁹. Convierte µ, n, cm.</td></tr>
+<tr><td class="f big">2</td><td><b>Dibujo</b>: dibuja las cargas y en cada una la flecha (repele/atrae; E sale de + y entra a −).</td></tr>
+<tr><td class="f big">3</td><td><b>Una fuerza (o campo) a la vez</b>: F = k·|q₁|·|q₂|/d² o E = k·|Q|/d². Números en la calculadora y exponentes a mano.</td></tr>
+<tr><td class="f big">4</td><td><b>En línea</b>: mismo sentido se suman, sentido opuesto se restan.</td></tr>
+<tr><td class="f big">5</td><td><b>Con ángulos</b>: Fx = F·cosθ, Fy = F·senθ (θ desde +x) → ΣFx, ΣFy.</td></tr>
+<tr><td class="f big">6</td><td><b>Resultante</b>: √(ΣFx² + ΣFy²) y el ángulo con tan⁻¹ y el cuadrante.</td></tr>
+</table>
+</div>
+<div class="warn"><b>Trampas típicas:</b> calculadora en <b>radianes</b> (prueba cos60 = 0.5) · olvidar <b>elevar d al cuadrado</b> · cm sin convertir a m · sumar exponentes mal (10⁹·10⁻⁶ = 10³) · la <b>raíz</b> de 10ⁿ necesita n par.</div>
+<footer>Ejercicios tomados de las fotos de la pizarra y del cuaderno (carpeta Física 3).</footer>
+</main>
+</body>
+</html>
