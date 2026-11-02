@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Tarjetas Física 3</title>
+<style>
+@page{size:Letter;margin:8mm}
+*{box-sizing:border-box}
+body{margin:0;font:7.6pt/1.28 system-ui,-apple-system,"Segoe UI",sans-serif;color:#000;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.sheet{columns:2;column-gap:4mm}
+.card{border:1px dashed #888;border-radius:2mm;padding:2.2mm 2.5mm;break-inside:avoid;margin:0 0 4mm;display:inline-block;width:100%}
+h2{font-size:9pt;margin:0 0 1mm;display:flex;justify-content:space-between;gap:2mm}
+h2 small{font-weight:600;color:#666;font-size:7pt}
+.dat{margin:0 0 1.2mm;padding:1mm 1.5mm;background:#f1f1ee;border-radius:1mm}
+table{width:100%;border-collapse:collapse}
+th{font-size:6.6pt;text-transform:uppercase;letter-spacing:.03em;padding:.6mm 1mm;text-align:left}
+th.h{background:#e6edff;color:#1f4fc4} th.c{background:#e3f4ea;color:#0d7a45}
+td{border-top:.5px solid #ccc;padding:.7mm 1mm;vertical-align:top;width:50%}
+td:first-child{border-right:.5px solid #ccc}
+.m{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:7.2pt}
+k{display:inline-block;font:600 6.8pt ui-monospace,Menlo,monospace;padding:0 .8mm;border:.5px solid #888;border-radius:.8mm;background:#f6f6f4;margin:0 .2mm}
+.r td{background:#fbe9ee}
+.ans{color:#b0123a;font-weight:700}
+.ojo{margin-top:1.2mm;padding:.8mm 1.5mm;border-left:2px solid #b45309;background:#fff4e2;font-size:7pt}
+.f td{border:none;padding:.3mm 1mm;width:auto}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<!-- FORMULAS -->
+<div class="card">
+<h2>Fórmulas <small>Física 3</small></h2>
+<table class="f m">
+<tr><td>F = k·|q₁|·|q₂| / d²</td><td>E = k·|Q| / d²</td></tr>
+<tr><td>Fx = F·cosθ &nbsp; Fy = F·senθ</td><td>F<sub>R</sub> = √(ΣFx² + ΣFy²)</td></tr>
+<tr><td>β = tan⁻¹(|ΣFy| / |ΣFx|)</td><td>d = √(k·q₁·q₂ / F)</td></tr>
+<tr><td>q₂ = F·d² / (k·q₁)</td><td>k = 9×10⁹ N·m²/C²</td></tr>
+</table>
+<div class="dat" style="margin-top:1mm">µ = 10⁻⁶ · n = 10⁻⁹ · m = 10⁻³ · p = 10⁻¹² · cm ÷ 100 = m<br>
+θ: I = β · II = 180−β · III = 180+β · IV = 360−β<br>
+Igual signo <b>repele</b> · distinto <b>atrae</b> · E <b>sale</b> de + y <b>entra</b> a −<br>
+Calculadora en grados: <k>60</k><k>cos</k> = 0.5 ✓</div>
+</div>
+
+<!-- EJ1 -->
+<div class="card">
+<h2>Ej 1 · Fuerza resultante <small>componentes</small></h2>
+<p class="dat">Fx = −10 N, Fy = 14 N. Hallar F<sub>R</sub> y θ.</p>
+<table>
+<tr><th class="h">✍️ A mano</th><th class="c">📱 Calculadora</th></tr>
+<tr><td class="m">F<sub>R</sub> = √((−10)² + 14²)</td><td><k>10</k><k>x²</k>→100 · <k>14</k><k>x²</k>→196</td></tr>
+<tr><td class="m">F<sub>R</sub> = √296</td><td><k>100</k><k>+</k><k>196</k><k>=</k><k>√x</k>→17.20</td></tr>
+<tr class="r"><td class="ans">F<sub>R</sub> = 17.20 N</td><td></td></tr>
+<tr><td class="m">γ = tan⁻¹(14/10) = tan⁻¹(1.4)</td><td><k>14</k><k>÷</k><k>10</k><k>=</k><k>2nd</k><k>tan⁻¹</k>→54.46</td></tr>
+<tr><td class="m">Cuadrante II: θ = 180 − 54.46</td><td><k>180</k><k>−</k><k>54.46</k><k>=</k>→125.54</td></tr>
+<tr class="r"><td class="ans">θ = 125.54° (profe ≈125°)</td><td></td></tr>
+</table>
+</div>
+
+<!-- EJ2 -->
+<div class="card">
+<h2>Ej 2 · Coulomb en línea <small>F<sub>R</sub> sobre q₁</small></h2>
+<p class="dat">q₁ = 4µC, q₂ = 2µC, q₃ = 1µC (todas +). q₁ —2 m— q₂ —2 m— q₃</p>
+<table>
+<tr><th class="h">✍️ A mano</th><th class="c">📱 Calculadora</th></tr>
+<tr><td class="m">F₁₂ = 9×10⁹·2×10⁻⁶·4×10⁻⁶ / 2²<br>10⁹⁻⁶⁻⁶ = 10⁻³</td><td><k>9</k><k>×</k><k>2</k><k>×</k><k>4</k>→72<br><k>72</k><k>÷</k><k>4</k>→18</td></tr>
+<tr class="r"><td class="ans">F₁₂ = 18×10⁻³ N</td><td></td></tr>
+<tr><td class="m">F₁₃ = 9×10⁹·4×10⁻⁶·1×10⁻⁶ / 4²</td><td><k>9</k><k>×</k><k>4</k>→36 · <k>36</k><k>÷</k><k>16</k>→2.25</td></tr>
+<tr class="r"><td class="ans">F₁₃ = 2.25×10⁻³ N</td><td></td></tr>
+<tr><td class="m">Profe: F<sub>R</sub> = F₁₃ − F₁₂</td><td><k>2.25</k><k>−</k><k>18</k><k>=</k>→−15.75</td></tr>
+<tr class="r"><td class="ans">F<sub>R</sub> = 15.75×10⁻³ N</td><td>(pizarra)</td></tr>
+</table>
+<p class="ojo">⚠ Todas +: las dos empujan q₁ a la izquierda y se <b>suman</b>: 18 + 2.25 = <b>20.25×10⁻³ N</b> ←</p>
+</div>
+
+<!-- EJ3 -->
+<div class="card">
+<h2>Ej 3 · Coulomb en triángulo <small>F<sub>R</sub> sobre q₁</small></h2>
+<p class="dat">q₁ = +7µC (arriba), q₃ = +2µC (abajo izq.), q₂ = −4µC (abajo der.), L = 0.5 m, 60°</p>
+<table>
+<tr><th class="h">✍️ A mano</th><th class="c">📱 Calculadora</th></tr>
+<tr><td class="m">F₁₃ = 9·7·2 ×10⁻³ / 0.5²</td><td><k>9</k><k>×</k><k>7</k><k>×</k><k>2</k>→126 · <k>126</k><k>÷</k><k>0.25</k>→504</td></tr>
+<tr><td class="m">F₁₂ = 9·7·4 ×10⁻³ / 0.5²</td><td><k>9</k><k>×</k><k>7</k><k>×</k><k>4</k>→252 · <k>252</k><k>÷</k><k>0.25</k>→1008</td></tr>
+<tr class="r"><td class="ans">F₁₃ = 0.504 N · F₁₂ = 1.008 N</td><td></td></tr>
+<tr><td class="m">ΣFx = 0.504·cos60 + 1.008·cos60<br>= 0.252 + 0.504 = 0.756</td><td><k>60</k><k>cos</k>→0.5<br><k>0.504</k><k>×</k><k>0.5</k> · <k>1.008</k><k>×</k><k>0.5</k></td></tr>
+<tr><td class="m">ΣFy = 0.504·sen60 + 1.008·sen60<br>= 0.436 + 0.873 = 1.309</td><td><k>60</k><k>sin</k>→0.866<br><k>0.504</k><k>×</k><k>0.866</k> · <k>1.008</k><k>×</k><k>0.866</k></td></tr>
+<tr><td class="m">F<sub>R</sub> = √(0.756² + 1.309²)</td><td><k>0.756</k><k>x²</k><k>+</k><k>1.309</k><k>x²</k><k>=</k><k>√x</k>→1.512</td></tr>
+<tr><td class="m">β = tan⁻¹(1.309/0.756)</td><td><k>1.309</k><k>÷</k><k>0.756</k><k>=</k><k>2nd</k><k>tan⁻¹</k>→60</td></tr>
+<tr class="r"><td class="ans">F<sub>R</sub> ≈ 1.51 N · β ≈ 60°</td><td>(pizarra: 1.53 N · 59.31°)</td></tr>
+</table>
+<p class="ojo">⚠ q₂ es − y atrae q₁ hacia abajo: F₁₂y = −0.873 → ΣFy = −0.437 → <b>F<sub>R</sub> = 0.873 N a −30°</b></p>
+</div>
+
+<!-- EJ4 -->
+<div class="card">
+<h2>Ej 4 · Campo eléctrico en línea <small>E<sub>R</sub> en P</small></h2>
+<p class="dat">q₁ = +10µC —2 m— P —3 m— q₂ = +8µC</p>
+<table>
+<tr><th class="h">✍️ A mano</th><th class="c">📱 Calculadora</th></tr>
+<tr><td class="m">E₁ = 9×10⁹·10×10⁻⁶ / 2²<br>10⁹⁻⁶ = 10³</td><td><k>9</k><k>×</k><k>10</k>→90 · <k>90</k><k>÷</k><k>4</k>→22.5</td></tr>
+<tr class="r"><td class="ans">E₁ = 22.50×10³ N/C →</td><td>(sale de q₁ +)</td></tr>
+<tr><td class="m">E₂ = 9×10⁹·8×10⁻⁶ / 3²</td><td><k>9</k><k>×</k><k>8</k>→72 · <k>72</k><k>÷</k><k>9</k>→8</td></tr>
+<tr class="r"><td class="ans">E₂ = 8×10³ N/C ←</td><td>(sale de q₂ +)</td></tr>
+<tr><td class="m">Opuestos: E<sub>R</sub> = (22.50 − 8)×10³</td><td><k>22.5</k><k>−</k><k>8</k><k>=</k>→14.5</td></tr>
+<tr class="r"><td class="ans">E<sub>R</sub> = 14.50×10³ N/C →</td><td></td></tr>
+</table>
+</div>
+
+<!-- EJ5 -->
+<div class="card">
+<h2>Ej 5 · Campo en triángulo <small>E<sub>R</sub> y θ en P</small></h2>
+<p class="dat">q₁ = −8nC (abajo izq.), q₂ = +6nC (abajo der.), L = 0.2 m, P arriba.<br>E₁ va hacia q₁ → 240° · E₂ sale de q₂ → 120°</p>
+<table>
+<tr><th class="h">✍️ A mano</th><th class="c">📱 Calculadora</th></tr>
+<tr><td class="m">E₁ = 9·8 / 0.2² (10⁹⁻⁹ = 1)<br>E₂ = 9·6 / 0.2²</td><td><k>72</k><k>÷</k><k>0.04</k>→1800<br><k>54</k><k>÷</k><k>0.04</k>→1350</td></tr>
+<tr><td class="m">E₁x = 1800·cos240 = −900<br>E₂x = 1350·cos120 = −675</td><td><k>240</k><k>cos</k><k>×</k><k>1800</k><k>=</k><br><k>120</k><k>cos</k><k>×</k><k>1350</k><k>=</k></td></tr>
+<tr><td class="m">E₁y = 1800·sen240 = −1558.85<br>E₂y = 1350·sen120 = 1169.13</td><td><k>240</k><k>sin</k><k>×</k><k>1800</k><k>=</k><br><k>120</k><k>sin</k><k>×</k><k>1350</k><k>=</k></td></tr>
+<tr><td class="m">ΣEx = −1575 · ΣEy = −389.71</td><td>suma cada columna</td></tr>
+<tr><td class="m">E<sub>R</sub> = √(1575² + 389.71²)</td><td><k>1575</k><k>x²</k><k>+</k><k>389.71</k><k>x²</k><k>=</k><k>√x</k>→1622.50</td></tr>
+<tr><td class="m">β = tan⁻¹(389.71/1575)<br>III: θ = 180 + β</td><td><k>389.71</k><k>÷</k><k>1575</k><k>=</k><k>2nd</k><k>tan⁻¹</k>→13.90<br><k>180</k><k>+</k><k>13.90</k>→193.90</td></tr>
+<tr class="r"><td class="ans">E<sub>R</sub> ≈ 1622.50 N/C · θ ≈ 193.90°</td><td>(pizarra: 1622.32 · 193.87°)</td></tr>
+</table>
+</div>
+
+<!-- EJ6 -->
+<div class="card">
+<h2>Ej 6 · Despejar la distancia <small>cuaderno</small></h2>
+<p class="dat">q₁ = 4µC, q₂ = 2µC, F = 0.2 N. Hallar d.</p>
+<table>
+<tr><th class="h">✍️ A mano</th><th class="c">📱 Calculadora</th></tr>
+<tr><td class="m">d = √(k·q₁·q₂ / F)</td><td></td></tr>
+<tr><td class="m">9×10⁹·4×10⁻⁶·2×10⁻⁶ = 72×10⁻³ = 0.072</td><td><k>9</k><k>×</k><k>4</k><k>×</k><k>2</k>→72 (coma 3 lugares → 0.072)</td></tr>
+<tr><td class="m">d = √(0.072 / 0.2) = √0.36</td><td><k>0.072</k><k>÷</k><k>0.2</k><k>=</k><k>√x</k>→0.6</td></tr>
+<tr class="r"><td class="ans">d = 0.6 m</td><td></td></tr>
+</table>
+</div>
+
+<!-- EJ7 -->
+<div class="card">
+<h2>Ej 7 · Dos cargas iguales <small>1er parcial</small></h2>
+<p class="dat">d = 200 cm, F = 9.5×10⁻¹⁴ N, q₁ = q₂ = q. Hallar q.</p>
+<table>
+<tr><th class="h">✍️ A mano</th><th class="c">📱 Calculadora</th></tr>
+<tr><td class="m">d = 200 ÷ 100 = 2 m<br>q² = F·d² / k</td><td><k>200</k><k>÷</k><k>100</k>→2</td></tr>
+<tr><td class="m">q² = 9.5×10⁻¹⁴·4 / 9×10⁹<br>= 4.22×10⁻²³</td><td><k>9.5</k><k>×</k><k>4</k>→38 · <k>38</k><k>÷</k><k>9</k>→4.222<br>exponente: −14 − 9 = −23</td></tr>
+<tr><td class="m">exponente par: 42.2×10⁻²⁴<br>q = √42.2 × 10⁻¹²</td><td><k>42.22</k><k>√x</k>→6.498</td></tr>
+<tr class="r"><td class="ans">q ≈ 6.5×10⁻¹² C (cada una)</td><td></td></tr>
+</table>
+</div>
+
+</div>
+</body>
+</html>
