@@ -65,6 +65,18 @@ svg .l{stroke:var(--ink);stroke-width:1.5;fill:none}
 svg .p{fill:var(--ans)} svg .n2{fill:var(--hand)}
 svg .v1{stroke:var(--ans);stroke-width:2.5} svg .v2{stroke:var(--calc);stroke-width:2.5}
 @media (max-width:560px){body{font-size:14px}.step>div{padding:7px 7px;font-size:13px}.f{font-size:13px}kbd{font-size:12px;padding:1px 4px}}
+@media print{
+  :root,:root[data-theme],:root:not([data-theme="light"]){--bg:#fff;--card:#fff;--ink:#000;--muted:#555;--line:#bbb;--hand:#1f4fc4;--hand-bg:#e9efff;--calc:#0d7a45;--calc-bg:#e6f5ec;--warn:#9a4a00;--warn-bg:#fff3df;--ans:#b0123a;--key:#f2f2f2;--keyb:#999}
+  body{background:#fff;font-size:12.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{width:auto;margin:0}
+  nav{display:none}
+  h2{break-after:avoid;margin-top:18px}
+  .ex,.card,.warn,.chip,svg.fig,.ex .head{break-inside:avoid}
+  .step>div{break-inside:avoid;font-size:12.5px}
+  .ex .head{break-after:avoid}
+  #ej1,#ej3,#ej5,#metodo{break-before:page}
+  svg.fig{max-width:260px}
+}
 footer{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}
 </style>
 </head>
