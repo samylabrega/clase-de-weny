@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>2do Parcial Física 3</title>
+<style>
+@page{size:Letter;margin:8mm}
+*{box-sizing:border-box}
+body{margin:0;font:7.6pt/1.28 system-ui,-apple-system,"Segoe UI",sans-serif;color:#000;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.sheet{columns:2;column-gap:4mm}
+.card{border:1px dashed #888;border-radius:2mm;padding:2.2mm 2.5mm;break-inside:avoid;margin:0 0 4mm;display:inline-block;width:100%}
+h2{font-size:9pt;margin:0 0 1mm;display:flex;justify-content:space-between;gap:2mm}
+h2 small{font-weight:600;color:#666;font-size:7pt}
+.dat{margin:0 0 1.2mm;padding:1mm 1.5mm;background:#f1f1ee;border-radius:1mm}
+table{width:100%;border-collapse:collapse}
+th{font-size:6.6pt;text-transform:uppercase;letter-spacing:.03em;padding:.6mm 1mm;text-align:left}
+th.h{background:#e6edff;color:#1f4fc4} th.c{background:#e3f4ea;color:#0d7a45}
+td{border-top:.5px solid #ccc;padding:.7mm 1mm;vertical-align:top;width:50%}
+td:first-child{border-right:.5px solid #ccc}
+.m{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:7.2pt}
+k{display:inline-block;font:600 6.8pt ui-monospace,Menlo,monospace;padding:0 .8mm;border:.5px solid #888;border-radius:.8mm;background:#f6f6f4;margin:0 .2mm}
+.r td{background:#fbe9ee}
+.ans{color:#b0123a;font-weight:700}
+.ojo{margin-top:1.2mm;padding:.8mm 1.5mm;border-left:2px solid #b45309;background:#fff4e2;font-size:7pt}
+.f td{border:none;padding:.3mm 1mm;width:auto}
+svg{display:block;width:100%;max-width:52mm;height:auto;margin:.5mm auto 1mm}svg text{font:600 7pt system-ui,sans-serif}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<div class="card">
+<h2>2do parcial · I · Campo en triángulo <small>E<sub>R</sub> y θ en P</small></h2>
+<p class="dat">+Q₁ = 7×10⁻⁹ C (abajo izq.), −Q₂ = 4×10⁻⁹ C (abajo der.), lados = 400 cm ÷ 100 = <b>4 m</b>, ángulos de base 65°.<br>E₁ <b>sale</b> de +Q₁ → 65° · E₂ <b>entra</b> a −Q₂ → 360 − 65 = 295°</p>
+<svg viewBox="0 0 200 110" aria-label="Triángulo con P arriba, Q1 positiva abajo a la izquierda y Q2 negativa abajo a la derecha">
+<polygon points="100,30 50,100 150,100" fill="none" stroke="#000" stroke-width="1.2"/>
+<line x1="100" y1="30" x2="125" y2="-5" stroke="#b0123a" stroke-width="2" transform="translate(0,6)"/>
+<line x1="100" y1="30" x2="122" y2="60" stroke="#0d7a45" stroke-width="2"/>
+<circle cx="100" cy="30" r="2.5"/><text x="88" y="28">P</text>
+<circle cx="50" cy="100" r="7" fill="#b0123a"/><text x="47" y="103" fill="#fff">+</text><text x="30" y="108">Q₁</text>
+<circle cx="150" cy="100" r="7" fill="#1f4fc4"/><text x="147" y="103" fill="#fff">−</text><text x="160" y="108">Q₂</text>
+<text x="128" y="12" fill="#b0123a">E₁</text><text x="126" y="62" fill="#0d7a45">E₂</text>
+<text x="60" y="96">65°</text><text x="124" y="96">65°</text><text x="128" y="70">4 m</text>
+</svg>
+<table>
+<tr><th class="h">✍️ A mano</th><th class="c">📱 Calculadora</th></tr>
+<tr><td class="m">E₁ = 9×10⁹·7×10⁻⁹ / 4²<br>10⁹⁻⁹ = 1</td><td><k>9</k><k>×</k><k>7</k>→63 · <k>4</k><k>x²</k>→16<br><k>63</k><k>÷</k><k>16</k><k>=</k>→3.9375</td></tr>
+<tr><td class="m">E₂ = 9×10⁹·4×10⁻⁹ / 4²</td><td><k>9</k><k>×</k><k>4</k>→36 · <k>36</k><k>÷</k><k>16</k><k>=</k>→2.25</td></tr>
+<tr class="r"><td class="ans">E₁ = 3.94 N/C · E₂ = 2.25 N/C</td><td></td></tr>
+<tr><td class="m">E₁x = 3.9375·cos65 = 1.664<br>E₂x = 2.25·cos295 = 0.951</td><td><k>65</k><k>cos</k><k>×</k><k>3.9375</k><k>=</k><br><k>295</k><k>cos</k><k>×</k><k>2.25</k><k>=</k></td></tr>
+<tr><td class="m">E₁y = 3.9375·sen65 = 3.569<br>E₂y = 2.25·sen295 = −2.039</td><td><k>65</k><k>sin</k><k>×</k><k>3.9375</k><k>=</k><br><k>295</k><k>sin</k><k>×</k><k>2.25</k><k>=</k></td></tr>
+<tr><td class="m">ΣEx = 1.664 + 0.951 = 2.615<br>ΣEy = 3.569 − 2.039 = 1.530</td><td><k>1.664</k><k>+</k><k>0.951</k><k>=</k><br><k>3.569</k><k>−</k><k>2.039</k><k>=</k></td></tr>
+<tr><td class="m">E<sub>R</sub> = √(2.615² + 1.530²)</td><td><k>2.615</k><k>x²</k><k>+</k><k>1.530</k><k>x²</k><k>=</k><k>√x</k>→3.03</td></tr>
+<tr class="r"><td class="ans">a) E<sub>R</sub> ≈ 3.03 N/C</td><td></td></tr>
+<tr><td class="m">β = tan⁻¹(1.530 / 2.615)<br>x+, y+ → cuadrante I: θ = β</td><td><k>1.530</k><k>÷</k><k>2.615</k><k>=</k><k>2nd</k><k>tan⁻¹</k>→30.32</td></tr>
+<tr class="r"><td class="ans">b) θ ≈ 30.32° con el eje x</td><td></td></tr>
+</table>
+<p class="ojo">⚠ sen295° es <b>negativo</b> (E₂ apunta hacia abajo). Calculadora en grados: <k>60</k><k>cos</k> = 0.5</p>
+</div>
+
+<div class="card">
+<h2>2do parcial · II · Distancia entre masas <small>gravitación</small></h2>
+<p class="dat">m₁ = 18 kg, m₂ = 24 kg, F = 5×10⁻¹² N, G = 6.67×10⁻¹¹ N·m²/kg². Hallar d.</p>
+<table>
+<tr><th class="h">✍️ A mano</th><th class="c">📱 Calculadora</th></tr>
+<tr><td class="m">F = G·m₁·m₂ / d²<br>d = √(G·m₁·m₂ / F)</td><td></td></tr>
+<tr><td class="m">Números: 6.67·18·24 = 2881.44</td><td><k>6.67</k><k>×</k><k>18</k><k>×</k><k>24</k><k>=</k>→2881.44</td></tr>
+<tr><td class="m">Exponentes: 10⁻¹¹ / 10⁻¹²<br>= 10⁻¹¹⁺¹² = 10¹</td><td></td></tr>
+<tr><td class="m">d² = (2881.44 / 5)×10¹<br>= 576.288×10 = 5762.88</td><td><k>2881.44</k><k>÷</k><k>5</k><k>=</k>→576.288<br><k>×</k><k>10</k><k>=</k>→5762.88</td></tr>
+<tr><td class="m">d = √5762.88</td><td><k>√x</k>→75.91</td></tr>
+<tr class="r"><td class="ans">d ≈ 75.91 m</td><td></td></tr>
+</table>
+</div>
+
+</div>
+</body>
+</html>
